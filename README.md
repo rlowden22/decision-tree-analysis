@@ -1,11 +1,8 @@
-# Research Paper
-* Name:
-* Semester:
-* Topic:
+# 5008 Final Research Paper
+* Name: Rowan Lowden
+* Semester: Summer 2025
+* Topic: Decision Tree 
 
-
-
-Note the following is an example outline to help you. Please rework as you need, you do not need to follow the section heads and *YOU SHOULD NOT* make everything a bulleted list. This needs to read as an executive report/research paper. 
 
 ## Introduction
 - What is the algorithm/datastructure?
@@ -43,3 +40,5 @@ Make sure to include the following:
 ## Summary
 - Provide a summary of your findings
 - What did you learn?
+
+## References 
