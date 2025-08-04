@@ -65,7 +65,9 @@ while endtree < 1
 d = d + 1
 
 end while
-``` [^8]
+```
+
+
 
 ### Entropy and Gini Impurity 
 
