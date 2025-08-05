@@ -1,7 +1,7 @@
 # 5008 Final Research Paper
 * Name: Rowan Lowden
 * Semester: Summer 2025
-* Topic: Decision Tree Algorithm: CART 
+* Topic: Decision Tree Algorithm
 
 ## Introduction/Overview
 
