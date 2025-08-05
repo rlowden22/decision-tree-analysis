@@ -3,66 +3,33 @@
 # Final Project Code: Decision Tree implmentation on mushroom data
 #is the mushroom edible or poisnoius? 
 
-#load the mushrooms
-#split the data into training and test sets
-#train decision tree model using sklearn
-#evaluate the model's preformance 
 
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, classification_report
-import matplotlib.pyplot as plt
+from model_utils import load_data, split_data, train_decision_tree, evaluate_model, save_results_to_csv, time_model_training
 
-# Load the mushrooms dataset
-def load_data():
-    df = pd.read_csv('data/mushrooms.csv')  # Load the CSV file from the data folder
-    X = df.drop('class', axis=1)  # Features (everything except the target column)
-    y = df['class']  # Target (class: edible or poisonous)
-    
-    # Convert categorical variables into numeric (using one-hot encoding)
-    X = pd.get_dummies(X)  # One-hot encode categorical columns
-    return X, y
+def main():
+    # 1. Load the dataset
+    X, y = load_data("data/mushrooms.csv")
 
-# Split the data into training and testing sets
-def split_data(X, y):
-    return train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Train a Decision Tree model
-def train_model(X_train, y_train):
-    clf = DecisionTreeClassifier(random_state=42)
-    clf.fit(X_train, y_train)
-    return clf
-
-# Evaluate the model's performance
-def evaluate_model(clf, X_test, y_test):
-    y_pred = clf.predict(X_test)  # Make predictions on the test set
-    accuracy = accuracy_score(y_test, y_pred)  # Accuracy metric
-    print(f"Accuracy: {accuracy}")
-    print("Classification Report:")
-    print(classification_report(y_test, y_pred))  # Detailed classification report
-    return accuracy
-
-# Optional: Visualize the accuracy results (optional for later experimentation)
-def visualize_results(accuracies):
-    plt.plot(accuracies)
-    plt.xlabel('Dataset Size')
-    plt.ylabel('Accuracy')
-    plt.title('Accuracy vs Dataset Size')
-    plt.show()
-
-if __name__ == '__main__':
-    # Load data
-    X, y = load_data()
-
-    # Split data into training and testing sets
+    # 2. Split the data into training and test sets
     X_train, X_test, y_train, y_test = split_data(X, y)
 
-    # Train the model
-    model = train_model(X_train, y_train)
+    # 3. Train the decision tree model
+    model = train_decision_tree(X_train, y_train)
 
-    # Evaluate the model
-    accuracy = evaluate_model(model, X_test, y_test)
+    # 4. Evaluate the model
+    evaluate_model(model, X_test, y_test)
 
-    # Optionally visualize results
-    visualize_results([accuracy])
+    # 5. Empirical analysis: how model scales with data size
+    sample_sizes = [500, 1000, 2000, 4000, 8000]
+    results = time_model_training(X, y, sample_sizes)
+
+    print("\nEmpirical Results (Size | Accuracy | Time in seconds):")
+    for size, acc, duration in results:
+        print(f"{size}\t{acc:.4f}\t{duration:.4f} sec")
+
+    # 6. Empirical analysis: how model scales with data size
+    save_results_to_csv(results)
+    print("Results saved to results/accuracy_timing.csv")
+
+if __name__ == "__main__":
+    main()
