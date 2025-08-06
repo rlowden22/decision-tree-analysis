@@ -21,7 +21,10 @@ Decision Trees have a rich history in the field of machine learning, with their 
 
 ## Theoretical Analysis
 
+### Entropy and Gini Impurity ??
+
 ### Time and Complexity: Big O
+
 
 Understanding the time and space complexity of Decision Tree algorithms is crucial for evaluating their efficiency, particularly as the dataset size increases. The time complexity of Decision Trees is influenced by the number of samples and features in the dataset, with the algorithm needing to evaluate all features for each potential split at each node. They use divide and conquer strategy by conducting a greedy search to identify the optimal splits within the tree data. The splitting continues to repeat in a top down recursive manner until all the data has been labeled under specific labels. [^1] 
 
@@ -64,7 +67,6 @@ d = d + 1
 
 end while
 ```
-### Entropy and Gini Impurity 
 
 
 
@@ -81,9 +83,33 @@ I used scikit-learn’s `DecisionTreeClassifier` to build and train the model. F
 One of the main challenges I faced was understanding the structure of machine learning workflows for the first time—especially how to prepare data for training and interpret classification metrics. Learning how to use scikit-learn was particularly helpful, as it provided many built-in functions for splitting datasets, fitting models, and generating performance reports. This project helped me better understand how decision trees are implemented and trained in real-world applications and gave me practical experience applying machine learning techniques to solve mushroom classification problems.
 
 ## Empirical Analysis
+
+To evaluate the performance of the Decision Tree classification algorithm, I conducted experiments using three datasets from the kaggle website: first a Mushroom dataset (~8,000 samples, 23 features) [^17], a Iris dataset (100,000 samples, 4 features) [^15], and a clinical diabetes dataset (100,000, 16 features) [^16]. The classification tasks involved predicting whether a mushroom is edible or poisonous, identifying an iris species, and determining whether an individual has diabetes. This section provides empirical evidence of runtime behavior across varying sample sizes, highlights scalability trends, and supports the algorithm's theoretical $O(n·log(n))$ time complexity. I also report classification accuracy using Python’s built-in `accuracy_score` function to assess model effectiveness.
+
+All data used to make the following graphs is in the attached excel workbook. 
+
+### Input(n) vs Runtime
+
+To evaluate the time complexity of the Decision Tree algorithm, I measured training time as the number of input samples increased across three datasets. The first graph focuses on smaller sample sizes (n ≤ 8000), highlighting early runtime behavior and variability between datasets. The second graph extends this analysis to larger datasets (up to 100,000 samples) using the Iris and Diabetes data to examine scalability and validate the expected quasi-linear growth pattern of O(n·log n). Polynomial trendlines were fitted to both graphs to help visualize runtime trends and assess consistency with theoretical expectations.
+
+#### N <= 8000
+
+![Runtime vs small n](images/small_n_runtime.png)
+
+#### N <= 100,000
+
+![Runtime vs large n](images/large_n_runtime.png)
+
+### Decision Tree Accuracy
+
+#### N <= 8000
+![accuracy vs large n](images/accuracy_small_n.png)
+
+#### N <= 100,000
+![accuracy vs large n](images/accuracy_large_n.png)
+
 - What is the empirical analysis?
-- Provide specific examples / data.
-- provide graphs/visuals
+
 
 A second-order polynomial trendline was added to the graph to approximate the growth of the Decision Tree model's runtime. With an R² value of 0.9904, this trendline closely models the observed quasi-linear behavior, which is expected given the algorithm’s average-case time complexity of O(n·log(n)).
 
@@ -135,3 +161,9 @@ Decision trees are powerful, versatile tools used across many scientific fields 
 [^13]: S. Hajihosseinlou, O. Asghari, and H. Shirvani. 2023. Application of Light Gradient Boosting Machine (LightGBM) in prospectivity modeling of Mississippi Valley-type Pb–Zn deposits in the Varcheh district, Iran. Natural Resources Research 32, 1 (2023), 487–506. DOI: https://doi.org/10.1007/s11053-022-10007-7
 
 [^14]: H. Lu and X. Ma. 2020. Hybrid decision tree-based models for short-term water quality prediction. Chemosphere 248 (2020), 125988. DOI: https://doi.org/10.1016/j.chemosphere.2020.125988
+
+[^15]: Ifeanyi Idiaye. 2024. Scaled Iris Dataset – 100k Rows. Kaggle. Retrieved August 6, 2025 from https://www.kaggle.com/datasets/idiaye/scaled-iris-dataset-100k-rows
+
+[^16]: Priyam Choksi. 2024. Comprehensive Diabetes Clinical Dataset (100 k rows). Kaggle. Retrieved August 6, 2025 from https://www.kaggle.com/datasets/priyamchoksi/100000-diabetes-clinical-dataset
+
+[17^]: UCI Machine Learning Repository (UCIML). 2025. *Mushroom Classification Dataset*. Kaggle. Retrieved August 6, 2025 from https://www.kaggle.com/datasets/uciml/mushroom-classification
