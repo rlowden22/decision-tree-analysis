@@ -19,9 +19,7 @@ def main():
     X_train, X_test, y_train, y_test = split_data(X, y)
 
     # 3. Train the decision tree model
-    model = train_decision_tree(X_train, y_train)
-   
-    #visualize_tree(model, X.columns, model.classes_.astype(str))
+    model = train_decision_tree(X_train, y_train) 
 
     # 4. Evaluate the model
     evaluate_model(model, X_test, y_test)
