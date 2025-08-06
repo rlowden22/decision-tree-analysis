@@ -82,6 +82,70 @@ I used scikit-learn’s `DecisionTreeClassifier` to build and train the model. F
 
 One of the main challenges I faced was understanding the structure of machine learning workflows for the first time—especially how to prepare data for training and interpret classification metrics. Learning how to use scikit-learn was particularly helpful, as it provided many built-in functions for splitting datasets, fitting models, and generating performance reports. This project helped me better understand how decision trees are implemented and trained in real-world applications and gave me practical experience applying machine learning techniques to solve mushroom classification problems.
 
+```python
+def split_data(X, y, test_size=0.2):
+    return train_test_split(X, y, test_size=test_size, random_state=42)
+
+```
+This function splits the feature set (X) and labels (y) into training and testing subsets. It uses an 80/20 split by default and sets a fixed random_state to ensure reproducible results.
+
+```python
+
+def train_decision_tree(X_train, y_train):
+    clf = DecisionTreeClassifier(random_state=42)
+    clf.fit(X_train, y_train)
+    return clf 
+```
+
+This function creates and trains a scikit-learn `DecisionTreeClassifier` on the training data. The random_state is set for reproducibility. The .fit() method builds the tree by recursively splitting the dataset based on feature values to reduce Gini impurity.
+
+After training the model using `DecisionTreeClassifier`, I visualized a simplified tree by setting a `max_depth` of 5 and classified the mushroom dataset. A depth of 5,  makes the tree small enough to interpret while still showing how the model selects features and splits based on them. Each node displays the splitting condition, number of samples, Gini impurity, and the predicted class. 
+
+![simplified tree](./images/tree_diagram_depth5.png)
+
+This visual shows how the decision tree identifies patterns in the data. For example, in the mushroom dataset, the model may split first on odor, which has high predictive value, followed by stalk, qualties of the cap, or other important features. The darker the color the more confident the model is in the predicition while the lighter color has more mized samples (edible and poisinous) and a higher Gini impurity. The blue node predicts poisonous while the orange predicts edible mushrooms. 
+
+```python 
+def evaluate_model(model, X_test, y_test):
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy}")
+    print("Classification Report:")
+    print(classification_report(y_test, y_pred))
+    return accuracy
+```
+This function uses the trained model to predict labels on the test set, then evaluates its performance using accuracy_score and classification_report. It prints and returns the overall accuracy, and displays precision, recall, and F1-score for each class.
+
+```python
+
+def time_model_training(X, y, sample_sizes):
+    results = []
+
+    for size in sample_sizes: #loop through the sample sizes
+        #sample of the data
+        X_sample = X[:size]
+        y_sample = y[:size]
+
+        #split into the train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X_sample, y_sample, test_size=0.2, random_state=42)
+        
+        #train and time the model
+        start = time.time()
+        model = train_decision_tree(X_train, y_train)
+        end = time.time()
+        
+        #evalulate the model with accuracy score
+        accuracy = evaluate_model(model, X_test, y_test)
+
+        #timing 
+        duration = end - start
+        #save results
+        results.append((size, accuracy, duration))
+
+    return results
+```
+This function evaluates how the model’s training time and accuracy change as the dataset grows. For each sample size, it splits the data, trains the model, records how long training takes, evaluates accuracy, and stores the results for empirical analysis.
+
 ## Empirical Analysis
 
 To evaluate the performance of the Decision Tree classification algorithm, I conducted experiments using three datasets from the kaggle website: first a Mushroom dataset (~8,000 samples, 23 features) [^17], a Iris dataset (100,000 samples, 4 features) [^15], and a clinical diabetes dataset (100,000, 16 features) [^16]. The classification tasks involved predicting whether a mushroom is edible or poisonous, identifying an iris species, and determining whether an individual has diabetes. This section provides empirical evidence of runtime behavior across varying sample sizes, highlights scalability trends, and supports the algorithm's theoretical $O(n·log(n))$ time complexity. I also report classification accuracy using Python’s built-in `accuracy_score` function to assess model effectiveness.

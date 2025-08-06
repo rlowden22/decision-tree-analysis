@@ -106,12 +106,3 @@ def save_results_to_csv(results, dataset_name, folder="results"):
         writer = csv.writer(f)
         writer.writerow(["Sample Size", "Accuracy", "Time (s)"])
         writer.writerows(results)
-
-
-#def visualize_tree(model, feature_names, class_names):
-    #from sklearn.tree import plot_tree
-    #import matplotlib.pyplot as plt
-    #plt.figure(figsize=(20, 10))
-    #plot_tree(model, filled=True, feature_names=feature_names, class_names=class_names)
-    #plt.title("Visualization of Trained Decision Tree")
-    #plt.show()"
