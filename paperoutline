@@ -78,3 +78,6 @@ Disadvantages: Prone to overfitting: Complex decision trees tend to overfit and 
 High variance estimators: Small variations within data can produce a very different decision tree. Bagging, or the averaging of estimates, can be a method of reducing variance of decision trees. However, this approach is limited as it can lead to highly correlated predictors.
 
 More costly: Given that decision trees take a greedy search approach during construction, they can be more expensive to train compared to other algorithms.
+
+
+Desicion Trees have preferences for small trees, which is consistent with the priniciple of parsimony in Occam's Razor. "entities should not be multplied beyond nessessity." This implies decision trees should only add complexity if neccessary because the simpliest explanation is often the best. To reduce the complexity, pruning is typically used which is when branches are removed that split features of low importance. A group of decision trees called a random forest is often used to maintain accuracy, but here we will focus on the individual decision tree. [^1]

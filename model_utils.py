@@ -16,12 +16,29 @@ from sklearn.metrics import accuracy_score, classification_report
 import csv
 import os
 
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import matplotlib.pyplot as plt 
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
-    X = df.drop('class', axis=1)
-    y = df['class']
-    X = pd.get_dummies(X)
+
+    if 'class' in df.columns:  # Mushroom dataset
+        X = df.drop('class', axis=1)
+        y = df['class']
+        X = pd.get_dummies(X)  # all features are categorical
+
+    elif 'Species' in df.columns:  # Iris dataset
+        X = df.drop('Species', axis=1)
+        y = pd.factorize(df['Species'])[0]  # Convert species to integers
+
+    elif 'diabetes' in df.columns:  # Diabetes dataset 
+        X = df.drop('diabetes', axis=1)
+        y = df['diabetes']  # Already 0 or 1
+        X = pd.get_dummies(X)
+
+    else:
+        raise ValueError("Unrecognized dataset format.")
+
     return X, y
 
 
@@ -66,14 +83,35 @@ def time_model_training(X, y, sample_sizes):
         #save results
         results.append((size, accuracy, duration))
 
-        return results
+    return results
     
-def save_results_to_csv(results, filepath="results/accuracy_timing.csv"):
-    """Save empirical analysis results to a CSV file."""
+def save_results_to_csv(results, dataset_name, folder="results"):
+    """
+    Save empirical analysis results to a CSV file.
+    
+    Args:
+        results (list of tuples): Each tuple should contain (Sample Size, Accuracy, Time)
+        dataset_name (str): Name of the dataset (e.g., 'mushroom', 'diabetes', 'iris')
+        folder (str): Folder to save the CSV files
+    """
+    # Create filename like: results/diabetes_accuracy_timing.csv
+    filename = f"{dataset_name.lower()}_accuracy_timing.csv"
+    filepath = os.path.join(folder, filename)
+    
     # Ensure the directory exists
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     
+    # Write the CSV file
     with open(filepath, mode='w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["Sample Size", "Accuracy", "Time (s)"])
         writer.writerows(results)
+
+
+#def visualize_tree(model, feature_names, class_names):
+    #from sklearn.tree import plot_tree
+    #import matplotlib.pyplot as plt
+    #plt.figure(figsize=(20, 10))
+    #plot_tree(model, filled=True, feature_names=feature_names, class_names=class_names)
+    #plt.title("Visualization of Trained Decision Tree")
+    #plt.show()"

@@ -11,10 +11,8 @@ In this report, I will explore and analyze a type of supervised learning algorit
 
 Decision Trees solve the problem of classification and regression by creating a model that makes decisions based on feature values. For classification problems, they predict categorical labels, such as determining whether a mushroom is edible or poisonous based on its attributes (e.g., color, size, odor). [^3] In regression problems, Decision Trees predict continuous values, like estimating house prices based on features such as size and location [^4]. The algorithm recursively splits data at each node based on the most informative features, using criteria like Gini Impurity or Information Gain [^5]. One of the key advantages of Decision Trees is their interpretability, as the structure of the tree allows us to trace the path of decisions leading to a final prediction. This makes them a valuable tool in a wide range of real-world applications, including medical diagnosis, credit scoring, and customer segmentation [^6]. 
 
-In this report. I will provide both theoretical and empirical analysis. First I will provide time and space complexities to understand its efficiency and scalability. Then I will proceed with an empirical analysis, where we apply the CART Decision Tree algorithm to a mushroom classification dataset, evaluating its performance and visualizing key results. The paper will also cover the application of Decision Trees in real-world contexts, such as a discussion on the algorithms use in modern scienfitic research demonstrating the practical value across various fields. Lastly, we will detail the implementation process, highlighting the challenges faced during this learning process and discussing the decisions made throughout. The conclusion will summarize key findings and suggest potential improvements or future research directions.
+In this report. I will provide both theoretical and empirical analysis. First I will provide time and space complexities to understand its efficiency and scalability. Then I will proceed with an empirical analysis, where we apply the CART Decision Tree algorithm to a mushroom classification dataset, evaluating its performance and visualizing key results. The paper will also cover the application of Decision Trees in real-world contexts, such as a discussion on the algorithms use in modern scienfitic research demonstrating the practical value across various fields. Lastly, I will detail the implementation process, highlighting the challenges faced during this learning process and discussing the decisions made throughout. The conclusion will summarize key findings and suggest potential improvements or future research directions.
 
-
-Desicion Trees have preferences for small trees, which is consistent with the priniciple of parsimony in Occam's Razor. "entities should not be multplied beyond nessessity." This implies decision trees should only add complexity if neccessary because the simpliest explanation is often the best. To reduce the complexity, pruning is typically used which is when branches are removed that split features of low importance. A group of decision trees called a random forest is often used to maintain accuracy, but here we will focus on the individual decision tree. [^1]
 
 ### Algorithm Development 
 
@@ -66,18 +64,28 @@ d = d + 1
 
 end while
 ```
-
-
-
 ### Entropy and Gini Impurity 
 
-### General analysis of the algorithm/datastructure
+
+
+## Implementation
+- What language did you use?
+- What libraries did you use?
+- What were the challenges you faced?
+- Provide key points of the algorithm/datastructure implementation, discuss the code.
+ 
+For this project, I implemented and evaluated a Decision Tree algorithm using Python due to its readability and extensive machine learning libraries. I used the pandas and numpy libraries for data cleaning and manipulation, and scikit-learn for model building, training, and evaluation. The dataset I worked with was the Mushroom dataset from Kaggle.com, which contains roughly 8,000 entries representing different types of mushrooms, each labeled as either edible or poisonous based on 22 categorical features.
+
+I used scikit-learn’s `DecisionTreeClassifier` to build and train the model. First, I loaded the dataset with pandas, encoded categorical values using built-in functions, and split the data into training and testing sets using train_test_split. I then trained the classifier and evaluated its performance using accuracy_score and classification_report to measure precision, recall, and F1-score. These tools allowed me to quickly understand the model's performance and adjust parameters when necessary. The decision tree algorithm provided an interpretable model that could accurately classify mushrooms with high reliability.
+
+One of the main challenges I faced was understanding the structure of machine learning workflows for the first time—especially how to prepare data for training and interpret classification metrics. Learning how to use scikit-learn was particularly helpful, as it provided many built-in functions for splitting datasets, fitting models, and generating performance reports. This project helped me better understand how decision trees are implemented and trained in real-world applications and gave me practical experience applying machine learning techniques to solve mushroom classification problems.
 
 ## Empirical Analysis
 - What is the empirical analysis?
 - Provide specific examples / data.
 - provide graphs/visuals
 
+A second-order polynomial trendline was added to the graph to approximate the growth of the Decision Tree model's runtime. With an R² value of 0.9904, this trendline closely models the observed quasi-linear behavior, which is expected given the algorithm’s average-case time complexity of O(n·log(n)).
 
 ## Application
 
@@ -91,16 +99,12 @@ The third research study examined to demonstrate the real world application of t
 
 Decision trees are powerful, versatile tools used across many scientific fields because they combine strong predictive performance with clear, interpretable logic. From ICU triage during the COVID-19 pandemic to forecasting river water quality and guiding mineral exploration, decision trees help researchers make sense of complex data and support real-world decisions. Their ability to handle diverse data types, reveal important variables, and produce transparent, rule-based models makes them especially useful in high-stakes fields like healthcare, environmental science, and resource management. As these examples show, decision trees are not just algorithms—they’re practical frameworks for turning data into actionable insight.
 
-## Implementation
-- What language did you use?
-- What libraries did you use?
-- What were the challenges you faced?
-- Provide key points of the algorithm/datastructure implementation, discuss the code.
-- If you found code in another language, and then implemented in your own language that is fine - but make sure to document that.
 
+### Discussion
+- Discuss your findings
 
 ## Summary
-- Provide a summary of your findings
+- Reflection / challenges
 - What did you learn?
 
 ## References 
