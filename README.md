@@ -33,11 +33,11 @@ Decision trees are powerful, versatile tools used across many scientific fields 
 
 ## Theoretical Analysis
 
-### Entropy, Information Gain, and Gini Impurity ?? 
+### Splitting Data: Entropy, Information Gain, and Gini Impurity
 
-In order to understand machine learning algorithm growth over time, such as the decision tree algorithm, it's important to understand how the algorithm is making decisions to split a dataset. The decision tree CART algorithm's goal is to split a dataset so it's classified correctly, using the features as information for splitting. In order to split, under the hood, the algoritm calculated entropy, information gain, and gini impurity to make those decisions. 
+In order to understand machine learning algorithm growth over time, such as the decision tree algorithm, it's important to understand how the algorithm is making decisions to split a dataset. The decision tree CART algorithm's goal is to split a dataset so it's classified correctly, using the features as information for splitting. In order to split, under the hood, the algoritm calculates entropy, information gain, and gini impurity to make decisions. 
 
-I will start with entropy, since it is a concept that is vital to explain imformation gain and gini impurity. Entropy is a measurement of disorder and is fundemental in many fields including thermodynamics and infomation theory. It is calculated with the following formula:
+Entropy is vital to explain imformation gain and gini impurity. Entropy is a measurement of disorder and is fundemental in many fields including thermodynamics and infomation theory. It is calculated with the following formula:
 
 $$
 \text{Entropy}(S) = - \sum_{c \in C} p(c) \log_2 p(c)
@@ -107,28 +107,25 @@ Entropy and Gini Impurity are both measures of impurity used by decision tree al
 Understanding how decision trees choose splits using entropy, information gain, and Gini impurity provides valuable insight into the logic behind the algorithm. These measures ensure the model reduces impurity at each step, gradually organizing the dataset into more homogenous subsets. By visualizing and calculating these values in examples like the mushroom dataset, we gain a clearer picture of how the algorithm operates under the hood. This foundation helps contextualize later analysis of runtime complexity, scalability, and model performance across different dataset.
 
 
-### stopping criteria (max depth, min samples, pure node)
+### Time and Complexity: Big O
 
-overfitting, pruning, and regularization 
+Understanding the time and space complexity of the Decision Tree algorithm is essential for evaluating its scalability and performance. Decision Trees use a recursive, top-down, divide-and-conquer approach to build a model that classifies input data based on feature values. At each internal node, the algorithm searches for the best feature to split the data using a greedy strategy, which reduces impurity by calculating Gini impurity as outlined above. The time to train a decision tree depends on the number of samples `n`, the number of features or attributes `m`, and the depth of the tree. [^1] 
 
-### Time and Complexity: Big O how the algo runs as the input grows
+Below is a table outlining the theoretical time and space complexity for each case in this report. A more detailed explanation for how these conclusions were reached is provided below along with the pseudocode.  
 
+| Case |  Time Complexity | Space Used | 
+| :-- | :-- |  :-- |
+| Best | $O(n * m * log n)$ | $O(n)$ |
+| Average | $O(n * m * log n)$ | $O(n)$ |
+| Worst | $O(n^2 * m)$ | $O(n)$ |
 
-Understanding the time and space complexity of Decision Tree algorithms is crucial for evaluating their efficiency, particularly as the dataset size increases. The time complexity of Decision Trees is influenced by the number of samples and features in the dataset, with the algorithm needing to evaluate all features for each potential split at each node. They use divide and conquer strategy by conducting a greedy search to identify the optimal splits within the tree data. The splitting continues to repeat in a top down recursive manner until all the data has been labeled under specific labels. [^1] 
-
-In the below pseudocode, The outer `while` loop runs recursively, with the depth of the tree increasing as the number of splits grows. At each level, the algorithm evaluates potential splits for each node. The inner `for` loop iterates over all nodes at the current depth, performing a split if the node is valid `(Node(i) > -1)`. For each node, the algorithm evaluates all `m` features to find the best split, typically involving sorting or scanning the data. Since the tree depth is logarithmic in relation to the number of samples, the overall time complexity is $O(n * m * log n)$ where `n` is the number of samples, `m` is the number of features, and $logn$ corresponds to the tree’s maximum depth [^4]. Therefore, the time complexity for building a decision tree is $O(n * m * log n)$, where $n$ is the number of data samples and $m$ is the number of features. This is because of greedy search for the best feature to split the data, involving sorting or scanning through the dataset. The recursive tree-building process continues until the tree is fully grown, which can be computationally expensive for large datasets [^4].
-
-The space complexity of Decision Trees is typically $O(n)$, as the tree structure needs to store both the data at each node and the tree itself. Each node in the tree may contain information about the data split and the distribution of the labels. Additionally, the tree's depth affects both time and space complexity, with deeper trees requiring more memory to store additional nodes. Overfitting, a common issue with decision trees, can also lead to higher space complexity due to the tree's depth increasing unnecessarily [^3].  
 
 ### Pseudocode: CART Algorithm 
 
-Understanding the time complexity of the Decision Tree algorithm involves examining how the algorithm builds the tree and evaluates splits at each node. The outer while loop runs for O(log n) iterations, as the depth of the tree grows logarithmically with respect to the number of samples. The inner for loop processes all nodes at each depth level, with the number of nodes doubling at each level (approximately 2^d nodes at depth d). For each node, the algorithm evaluates m features to find the best split, and this evaluation typically involves sorting or scanning through the dataset, which has a time complexity of O(n log n) per feature. Thus, the overall time complexity is O(n * m * log n), where n is the number of samples, m is the number of features, and log n represents the tree depth.
+To better understand where the logarithmic depth and nested evaluations come from, consider the following simplified pseudocode for growing a binary decision tree using the CART algorithm: [^8]:
 
-In terms of space complexity, the Decision Tree algorithm requires space to store both the dataset and the tree structure. Each node in the tree stores information about the feature used for splitting, the split value, and possibly the dataset passing through the node. In the worst case, a fully grown tree with n samples has up to 2n - 1 nodes, which results in a space complexity of O(n). This space is primarily consumed by the dataset and the tree structure, which grows linearly with the number of samples (n). Thus, the overall space complexity of Decision Trees is O(n).
-
-Below is the pseudocode for the Decision Tree CART Algorithm [^8]:
-
-```d = 0, endtree = 0
+```d = 0
+endtree = 0
 
 Note(0) = 1, Node(1) = 0, Node(2) = 0
 
@@ -155,6 +152,27 @@ d = d + 1
 
 end while
 ```
+
+Understanding the time complexity of the Decision Tree algorithm involves analyzing how the tree is built and how features are evaluated at each node. At a high level, the tree is constructed recursively through a series of splits, with each level of the tree representing a deeper depth of classification. The outer `while` loop corresponds to tree depth, which grows logarithmically in the best and average cases—resulting in $O(\log n)$ depth. The inner `for` loop processes all nodes at each depth level, with the number of nodes doubling at each level (approximately 2^d nodes at depth d). For each node, the algorithm evaluates `m` features to find the best split, and this evaluation typically involves sorting or scanning through the dataset, which has a time complexity of $O(n log n)$ per feature. As a result, the overall time complexity for building the tree is $O(n * m * log n)$ in the best and average cases. [^4]
+
+In the worst case, where the tree becomes unbalanced and each split removes only one sample (due to identical features or poor splits), the depth can be up to `n`, and the complexity becomes $O(n² × m)$. This typically occurs when the data does not split evenly due to poor feature choice or when many samples have identical feature values. Despite this, most practical implementations like scikit-learn’s CART-based `DecisionTreeClassifier` use heuristics and stopping conditions to prevent the tree from growing inefficiently. [^4]
+
+In terms of space complexity, the Decision Tree algorithm requires memory to store both the dataset and the resulting tree structure. Each node in the tree stores information such as the feature used for splitting, the threshold value, and the distribution of target labels. In the worst case, a fully grown binary tree with n samples can contain up to 2n - 1 nodes, leading to a space complexity of $O(n)$. This complexity is generally consistent across best, average, and worst cases because each data sample is typically used once and the structure of the tree grows linearly with the dataset size. However, deeper trees—often caused by overfitting or unbalanced splits—can increase memory usage due to the need to store more internal nodes, even though the overall space complexity remains $O(n)$.[^3]
+
+### Proof of Correctness: Loop of Invariant
+
+To confirm that the decision tree algorithm builds a valid tree that correctly classifies input data, we can use a loop invariant to establish correctness:
+
+Loop Invariant: At the beginning of each iteration of the while loop, all active nodes at depth `d` have data that has been partitioned according to the previous splits.
+
+Initialization: At depth d = 0, all data resides at the root node, and no splits have occurred yet. The invariant holds.
+
+Maintenance: Each node at depth `d` either becomes a leaf (if data is pure or splitting is no longer possible), or it is split based on the best feature, sending data to child nodes at depth `d+1`. The new data partition respects the split condition.
+
+Termination: The loop ends when all nodes are marked as leaves, ensuring that no further data can be split. At this point, every sample has a unique path from the root to a terminal leaf, which corresponds to a classification.
+
+This loop invariant confirms that the tree is built correctly and recursively partitions the dataset based on feature-based decisions. Since the algorithm uses deterministic splits based on calculated Gini impurity, each sample is guaranteed to be classified into a specific class at a leaf node.
+
 
 
 
@@ -321,3 +339,5 @@ This graph displays classification accuracy as input size increases up to 100,00
 [^17]: UCI Machine Learning Repository (UCIML). 2025. *Mushroom Classification Dataset*. Kaggle. Retrieved August 6, 2025 from https://www.kaggle.com/datasets/uciml/mushroom-classification
 
 [^18]: GeeksforGeeks. 2022. Scikit-learn: Classification Metrics. GeeksforGeeks. Retrieved August 6, 2025 from https://www.geeksforgeeks.org/machine-learning/sklearn-classification-metrics/
+
+[^19]: GeeksforGeeks. 2024. Python | Decision tree implementation. GeeksforGeeks. Retrieved August 7, 2025 from https://www.geeksforgeeks.org/machine-learning/decision-tree-implementation-python/
