@@ -19,6 +19,11 @@ import os
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 import matplotlib.pyplot as plt 
 
+"""
+this function loads the dataset from a CSV file.
+It handles different datasets by checking for specific columns.
+"""
+
 def load_data(filepath):
     df = pd.read_csv(filepath)
 
@@ -41,15 +46,27 @@ def load_data(filepath):
 
     return X, y
 
+""""
+This function splits the dataset into training and test sets.
+It uses a default test size of 20% and a fixed random state for reproducibility.
+"""
 
 def split_data(X, y, test_size=0.2):
     return train_test_split(X, y, test_size=test_size, random_state=42)
+
+"""
+This function trains a Decision Tree Classifier on the training data.
+It uses a fixed random state for reproducibility."""
 
 def train_decision_tree(X_train, y_train):
     clf = DecisionTreeClassifier(random_state=42)
     clf.fit(X_train, y_train)
     return clf
 
+"""
+This function evaluates the model's performance on the test set.
+It prints the accuracy and a classification report.
+"""
 
 def evaluate_model(model, X_test, y_test):
     y_pred = model.predict(X_test)
@@ -58,6 +75,10 @@ def evaluate_model(model, X_test, y_test):
     print("Classification Report:")
     print(classification_report(y_test, y_pred))
     return accuracy
+
+"""This function times the training of the model on different sample sizes.
+It returns a list of tuples containing the sample size, accuracy, and time of training in seconds.
+"""
 
 def time_model_training(X, y, sample_sizes):
     results = []
@@ -84,6 +105,9 @@ def time_model_training(X, y, sample_sizes):
         results.append((size, accuracy, duration))
 
     return results
+
+    """This function saves the empirical analysis results to a CSV file.
+    It creates a folder if it doesn't exist and writes the results in a structured format."""
     
 def save_results_to_csv(results, dataset_name, folder="results"):
     """
