@@ -33,9 +33,22 @@ Decision trees are powerful, versatile tools used across many scientific fields 
 
 ## Theoretical Analysis
 
-### Entropy and Gini Impurity ??
+### Entropy, Information Gain, and Gini Impurity ?? 
+how the algo makes decisions (which splits to choose) splitting criteria
 
-### Time and Complexity: Big O
+In order to understand machine learning algorithm growth over time, such as the decision tree algorithm, it's important to understand how the algorithm is making decisions to split a dataset. The decision tree CART algorithm's goal is to split a dataset so it's classified correctly, using the features as information for splitting. In order to split, under the hood, the algoritm calculated entropy, information gain, and gini impurity to make those decisions. 
+
+I will start with entropy, since it is a concept that is vital to explain imformation gain and gini impurity. Entropy is a measurement of disorder and is fundemental in many fields including thermodynamics and infomation theory. It is calculated with the following formula
+
+\[
+Entropy = -\sum_{i=1}^{C} p_i \log_2(p_i)
+\]
+
+### stopping criteria (max depth, min samples, pure node)
+
+overfitting, pruning, and regularization 
+
+### Time and Complexity: Big O how the algo runs as the input grows
 
 
 Understanding the time and space complexity of Decision Tree algorithms is crucial for evaluating their efficiency, particularly as the dataset size increases. The time complexity of Decision Trees is influenced by the number of samples and features in the dataset, with the algorithm needing to evaluate all features for each potential split at each node. They use divide and conquer strategy by conducting a greedy search to identify the optimal splits within the tree data. The splitting continues to repeat in a top down recursive manner until all the data has been labeled under specific labels. [^1] 
