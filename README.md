@@ -173,20 +173,21 @@ Termination: The loop ends when all nodes are marked as leaves, ensuring that no
 
 This loop invariant confirms that the tree is built correctly and recursively partitions the dataset based on feature-based decisions. Since the algorithm uses deterministic splits based on calculated Gini impurity, each sample is guaranteed to be classified into a specific class at a leaf node.
 
-
-
-
 ## Implementation
-- What language did you use?
-- What libraries did you use?
-- What were the challenges you faced?
-- Provide key points of the algorithm/datastructure implementation, discuss the code.
- 
-For this project, I implemented and evaluated a Decision Tree algorithm using Python due to its readability and extensive machine learning libraries. I used the pandas and numpy libraries for data cleaning and manipulation, and scikit-learn for model building, training, and evaluation. The dataset I worked with was the Mushroom dataset from Kaggle.com, which contains roughly 8,000 entries representing different types of mushrooms, each labeled as either edible or poisonous based on 22 categorical features.
 
-I used scikit-learn’s `DecisionTreeClassifier` to build and train the model. First, I loaded the dataset with pandas, encoded categorical values using built-in functions, and split the data into training and testing sets using train_test_split. I then trained the classifier and evaluated its performance using accuracy_score and classification_report to measure precision, recall, and F1-score. These tools allowed me to quickly understand the model's performance and adjust parameters when necessary. The decision tree algorithm provided an interpretable model that could accurately classify mushrooms with high reliability.
+For this project, I used Python due to its robust ecosystem of machine learning libraries. I relied on pandas and numpy for data preprocessing, matplotlib for tree visualzation, excel for graphing, and scikit-learn for implementing the Decision Tree algorithm. This includes training the model and evaluating performance.I worked with 3 datasets from Kaggle:
 
-One of the main challenges I faced was understanding the structure of machine learning workflows for the first time—especially how to prepare data for training and interpret classification metrics. Learning how to use scikit-learn was particularly helpful, as it provided many built-in functions for splitting datasets, fitting models, and generating performance reports. This project helped me better understand how decision trees are implemented and trained in real-world applications and gave me practical experience applying machine learning techniques to solve mushroom classification problems.
+* Mushroom dataset (~8000 samples, 22 features) [^17]
+* Iris dataset (100,000 samples, 4 features) [^15]
+* Clinical diabetes dataset (100,000 samples, 16 features) [^16]
+
+I began with the mushroom dataset, but due to its smaller size, I added larger datasets to better explore the algorithm's runtime and scalability as well as exploring what it means to have different number of features for classification. 
+
+To build and train the model, I used scikit-learn’s built-in `DecisionTreeClassifier`, a common implementation of the CART (Classification and Regression Tree) algorithm. After researching popular workflows, I found this method was widely used in machine learning tasks. I used functions such as `train_test_split()` to split data, and `accuracy_score()` and `classification_report()` to evaluate how well the model performed on the test set. [^20] These tools allowed me to quickly understand the model's performance and adjust parameters when necessary. The decision tree algorithm provided an interpretable model that could accurately classify data with high reliability (accuracy values available in the empirical analysis). [^18]
+
+A key challenge was learning how to structure the machine learning workflow, especially understanding how to encode categorical features, split data correctly, and interpret performance metrics. Sklearn’s built-in tools made it easier to get reliable results quickly and focus on understanding how decision trees work under the hood. This project gave me hands-on experience applying a decision tree algorithm across datasets of varying size and complexity using a professional workflow.
+
+Below I walk through my code to show my a implmented these built in tools to learn and analyze decision tree algorithm. 
 
 ```python
 def split_data(X, y, test_size=0.2):
@@ -292,14 +293,11 @@ This graph shows how accuracy varies with input size up to 8,000 samples for all
 
 This graph displays classification accuracy as input size increases up to 100,000 samples for the diabetes and iris datasets. Accuracy for both models stabilizes at larger sample sizes, with the diabetes classifier maintaining strong performance around 94–95%, and the iris classifier settling near 91%. The initial volatility smooths out as the model sees more data, indicating better generalization and reduced sensitivity to training variation. These results support the idea that Decision Trees benefit from larger datasets, particularly when working with more complex or less separable features like those in the iris dataset.
 
-
-
-
-
-### Discussion
-- Discuss your findings
-
 ## Summary
+### Discussion
+
+### Reflection
+
 - Reflection / challenges
 - What did you learn?
 
@@ -341,3 +339,5 @@ This graph displays classification accuracy as input size increases up to 100,00
 [^18]: GeeksforGeeks. 2022. Scikit-learn: Classification Metrics. GeeksforGeeks. Retrieved August 6, 2025 from https://www.geeksforgeeks.org/machine-learning/sklearn-classification-metrics/
 
 [^19]: GeeksforGeeks. 2024. Python | Decision tree implementation. GeeksforGeeks. Retrieved August 7, 2025 from https://www.geeksforgeeks.org/machine-learning/decision-tree-implementation-python/
+
+[^20]: GeeksforGeeks. 2025. Implementing Decision Tree Classifiers with scikit‑learn: A Comprehensive Guide. GeeksforGeeks. Retrieved August 7, 2025 from https://www.geeksforgeeks.org/machine-learningbuilding-and-implementing-decision-tree-classifiers-with-scikit-learn-a-comprehensive-guide/
