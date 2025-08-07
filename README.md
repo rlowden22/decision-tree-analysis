@@ -61,35 +61,39 @@ $$
 * $\frac{|S_v|}{|S|}$ is the proportion of the subset with a specific attrbution to the entire dataset.
 
 Fore example, if we consider a theoretical instance with 100 mushroom samples and 60 are edible while 40 are poisonous. We already know entropy would be high with distinct almost half and half split between classifications, but for claririty, the entropy would be caculated: 
+
+
 $$
-Entropy(S) = -\left(\frac{60}{100}\right) \log_2 \left(\frac{60}{100}\right) - \left(\frac{40}{100}\right) \log_2 \left(\frac{40}{100}\right)
+\text{Entropy}(S) = -\left(\frac{60}{100}\right) \log_2 \left(\frac{60}{100}\right) - \left(\frac{40}{100}\right) \log_2 \left(\frac{40}{100}\right)
 $$
 
 $$
-Entropy(S) = -0.6 \log_2(0.6) - 0.4 \log_2(0.4) = 0.970
+\text{Entropy}(S) = -0.6 \log_2(0.6) - 0.4 \log_2(0.4) = 0.970
 $$
 
 Now if the algorithm splitted the data on the feature/attricute odor. If 30 mushrooms have a foul odor and all of them are poisonious (entropy = 0) and the remaining 70 have mixed classification (60 edible and 10 poisonous), the entropy would be calcauted as followed
 
 $$
-Entropy(S_{\text{odor} \neq \text{foul}}) = -\left(\frac{60}{70}\right) \log_2 \left(\frac{60}{70}\right) - \left(\frac{10}{70}\right) \log_2 \left(\frac{10}{70}\right)
+\text{Entropy}(S_{\text{odor} \neq \text{foul}}) = -\left(\frac{60}{70}\right) \log_2 \left(\frac{60}{70}\right) - \left(\frac{10}{70}\right) \log_2 \left(\frac{10}{70}\right)
 $$
 
 $$
-Entropy = -0.857 \log_2(0.857) - 0.143 \log_2(0.143) \approx 0.863
+\text{Entropy} = -0.857 \log_2(0.857) - 0.143 \log_2(0.143) \approx 0.863
 $$
 
-With an the entropycaculations of 0 and 0.863. The calculated information gain from splitting on the odor feature would be:
+With an the entropy caculations of 0 and 0.863. The calculated information gain from splitting on the odor feature would be:
 
 $$
-Gain(S, \text{odor}) = Entropy(S) - \left( \frac{30}{100} \cdot 0 \right) - \left( \frac{70}{100} \cdot 0.863 \right)
+\text{Gain}(S, \text{odor}) = \text{Entropy}(S) - \left( \frac{30}{100} \cdot 0 \right) - \left( \frac{70}{100} \cdot 0.863 \right)
 $$
 
 $$
-Gain(S, \text{odor}) = 0.970 - 0 - 0.604 = 0.366
+\text{Gain}(S, \text{odor}) = 0.970 - 0 - 0.604 = 0.366
 $$
 
 This means that splitting by odor is a significant reduction in entropy and reduces the impurity, therefore the decision tree algorithm would likely select this as the first feature to split on. 
+
+Lastly, before discussing Big
 
 
 ### stopping criteria (max depth, min samples, pure node)
