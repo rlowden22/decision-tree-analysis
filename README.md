@@ -38,11 +38,59 @@ how the algo makes decisions (which splits to choose) splitting criteria
 
 In order to understand machine learning algorithm growth over time, such as the decision tree algorithm, it's important to understand how the algorithm is making decisions to split a dataset. The decision tree CART algorithm's goal is to split a dataset so it's classified correctly, using the features as information for splitting. In order to split, under the hood, the algoritm calculated entropy, information gain, and gini impurity to make those decisions. 
 
-I will start with entropy, since it is a concept that is vital to explain imformation gain and gini impurity. Entropy is a measurement of disorder and is fundemental in many fields including thermodynamics and infomation theory. It is calculated with the following formula
+I will start with entropy, since it is a concept that is vital to explain imformation gain and gini impurity. Entropy is a measurement of disorder and is fundemental in many fields including thermodynamics and infomation theory. It is calculated with the following formula:
 
 $$
-Entropy = -\sum_{i=1}^{C} p_i \log_2(p_i)
+\text{Entropy}(S) = - \sum_{c \in C} p(c) \log_2 p(c)
 $$
+
+* $S$ is the dataset of labeled samples that entropy is calculated.
+* $c$ is the classes in the set $S$. 
+* $p(c)$ represents the proportion of data points that belong to class $c$ to the number of total data points in the set. 
+
+Calcuated entropy values fall between 0 and 1 with low entropy or disorder in a set equaling 0 and if a set has samples of half one class and half another the entropy will be the highest at 1. In order to find the optimal split, the decision tree algorithm will find the best feature to split the dataset with the smallest amount of entropy. 
+
+Information gain is a measurement of how well organized a dataset is after a split. It represents the difference in entropy before and after a spit on given feature. IF an attribute has high information gain it will produce the best split which means it is excelling at classifying the training data according to the targe classification. It is represented by the following fomula: 
+
+$$
+\text{Information Gain}(S, a) = \text{Entropy}(S) - \sum_{v \in \text{Values}(a)} \frac{|S_v|}{|S|} \cdot \text{Entropy}(S_v)
+$$
+
+* $a$ represents a specific attribute 
+* Entropy$(S)$ is the entropy dataset
+* $\frac{|S_v|}{|S|}$ is the proportion of the subset with a specific attrbution to the entire dataset.
+
+Fore example, if we consider a theoretical instance with 100 mushroom samples and 60 are edible while 40 are poisonous. We already know entropy would be high with distinct almost half and half split between classifications, but for claririty, the entropy would be caculated: 
+$$
+Entropy(S) = -\left(\frac{60}{100}\right) \log_2 \left(\frac{60}{100}\right) - \left(\frac{40}{100}\right) \log_2 \left(\frac{40}{100}\right)
+$$
+
+$$
+Entropy(S) = -0.6 \log_2(0.6) - 0.4 \log_2(0.4) = 0.970
+$$
+
+Now if the algorithm splitted the data on the feature/attricute odor. If 30 mushrooms have a foul odor and all of them are poisonious (entropy = 0) and the remaining 70 have mixed classification (60 edible and 10 poisonous), the entropy would be calcauted as followed
+
+$$
+Entropy(S_{\text{odor} \neq \text{foul}}) = -\left(\frac{60}{70}\right) \log_2 \left(\frac{60}{70}\right) - \left(\frac{10}{70}\right) \log_2 \left(\frac{10}{70}\right)
+$$
+
+$$
+Entropy = -0.857 \log_2(0.857) - 0.143 \log_2(0.143) \approx 0.863
+$$
+
+With an the entropycaculations of 0 and 0.863. The calculated information gain from splitting on the odor feature would be:
+
+$$
+Gain(S, \text{odor}) = Entropy(S) - \left( \frac{30}{100} \cdot 0 \right) - \left( \frac{70}{100} \cdot 0.863 \right)
+$$
+
+$$
+Gain(S, \text{odor}) = 0.970 - 0 - 0.604 = 0.366
+$$
+
+This means that splitting by odor is a significant reduction in entropy and reduces the impurity, therefore the decision tree algorithm would likely select this as the first feature to split on. 
+
 
 ### stopping criteria (max depth, min samples, pure node)
 
