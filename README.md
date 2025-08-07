@@ -40,9 +40,9 @@ In order to understand machine learning algorithm growth over time, such as the 
 
 I will start with entropy, since it is a concept that is vital to explain imformation gain and gini impurity. Entropy is a measurement of disorder and is fundemental in many fields including thermodynamics and infomation theory. It is calculated with the following formula
 
-\[
+$$
 Entropy = -\sum_{i=1}^{C} p_i \log_2(p_i)
-\]
+$$
 
 ### stopping criteria (max depth, min samples, pure node)
 
