@@ -34,7 +34,6 @@ Decision trees are powerful, versatile tools used across many scientific fields 
 ## Theoretical Analysis
 
 ### Entropy, Information Gain, and Gini Impurity ?? 
-how the algo makes decisions (which splits to choose) splitting criteria
 
 In order to understand machine learning algorithm growth over time, such as the decision tree algorithm, it's important to understand how the algorithm is making decisions to split a dataset. The decision tree CART algorithm's goal is to split a dataset so it's classified correctly, using the features as information for splitting. In order to split, under the hood, the algoritm calculated entropy, information gain, and gini impurity to make those decisions. 
 
@@ -93,7 +92,19 @@ $$
 
 This means that splitting by odor is a significant reduction in entropy and reduces the impurity, therefore the decision tree algorithm would likely select this as the first feature to split on. 
 
-Lastly, before discussing Big
+Lastly, before discussing Big O, gini impurity is calcualted as another way to measure how mixed a given split is in a dataset. It is a probability caculation signifiying if a random data point is incorrectly classificed in a dataset. Similar to entropy, if a set $S$ is pure and all one class (edible) then the gini impurity would be 0. Unlike entropy, the gini impurity maximum depends on the number of classes. If there are 2 classes, like the mushroom example, the maximum gini impurity is 0.5. The formula for gini imputiy is as follows:
+
+$$
+\text{Gini}(S) = 1 - \sum_{c \in C} \left(p(c)\right)^2
+$$
+
+* $C$ is the set of classes
+* $p(c)$ is the probability of a datapoint bellonging to class $C$. 
+* $\sum_{c \in C}$ the sum of $c$ within $C$
+
+Entropy and Gini Impurity are both measures of impurity used by decision tree algorithms to decide where to split the data. Entropy is based on information theory and involves logarithmic calculations, while Gini Impurity is simpler and faster to compute, measuring the probability of misclassification. The `DecisionTreeClassifier` in scikit-learn defaults to using Gini Impurity because it is computationally efficient and typically results in similar split decisions as entropy.
+
+Understanding how decision trees choose splits using entropy, information gain, and Gini impurity provides valuable insight into the logic behind the algorithm. These measures ensure the model reduces impurity at each step, gradually organizing the dataset into more homogenous subsets. By visualizing and calculating these values in examples like the mushroom dataset, we gain a clearer picture of how the algorithm operates under the hood. This foundation helps contextualize later analysis of runtime complexity, scalability, and model performance across different dataset.
 
 
 ### stopping criteria (max depth, min samples, pure node)
