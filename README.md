@@ -37,42 +37,37 @@ From forecasting river conditions to ICU triage and mineral exploration, decisio
 
 ### Splitting Data: Entropy, Information Gain, and Gini Impurity
 
-In order to understand machine learning algorithm growth over time, such as the decision tree algorithm, it's important to understand how the algorithm is making decisions to split a dataset. The decision tree CART algorithm's goal is to split a dataset so it's classified correctly, using the features as information for splitting. In order to split, under the hood, the algoritm calculates entropy, information gain, and gini impurity to make decisions. 
+To understand the performance of decision tree algorithms such as CART, it is important to examine how they determine the best feature to split the dataset at each step. The goal of any decision tree is to create splits that produce increasingly homogeneous subsets, improving classification or regression accuracy. Different decision tree algorithms use different measures to guide these splits. ID3 and C4.5 use entropy and information gain, while CART, the focus of this project, uses Gini Impurity for classification.
 
-Entropy is vital to explain imformation gain and gini impurity. Entropy is a measurement of disorder and is fundemental in many fields including thermodynamics and infomation theory. It is calculated with the following formula:
+Entropy measures the amount of disorder in a dataset and is fundamental to information theory. It is calculated as:
 
 $$
 \text{Entropy}(S) = - \sum_{c \in C} p(c) \log_2 p(c)
 $$
 
-* $S$ is the dataset of labeled samples that entropy is calculated.
+* $S$ is the dataset
 * $c$ is the classes in the set $S$. 
-* $p(c)$ represents the proportion of data points that belong to class $c$ to the number of total data points in the set. 
+* $p(c)$ represents the proportion of data points that belong to class $c$ 
 
 Calcuated entropy values fall between 0 and 1 with low entropy or disorder in a set equaling 0 and if a set has samples of half one class and half another the entropy will be the highest at 1. In order to find the optimal split, the decision tree algorithm will find the best feature to split the dataset with the smallest amount of entropy. 
 
-Information gain is a measurement of how well organized a dataset is after a split. It represents the difference in entropy before and after a spit on given feature. IF an attribute has high information gain it will produce the best split which means it is excelling at classifying the training data according to the targe classification. It is represented by the following fomula: 
+Information gain measures the reduction in entropy after a dataset is split on a feature. If an attribute has high information gain it will produce the best split which means it is excelling at classifying the training data according to the target classification. It is represented by the following formula: 
 
 $$
 \text{Information Gain}(S, a) = \text{Entropy}(S) - \sum_{v \in \text{Values}(a)} \frac{|S_v|}{|S|} \cdot \text{Entropy}(S_v)
 $$
 
-* $a$ represents a specific attribute 
+* $a$ represents attribute being split
 * Entropy$(S)$ is the entropy dataset
 * $\frac{|S_v|}{|S|}$ is the proportion of the subset with a specific attrbution to the entire dataset.
 
-Fore example, if we consider a theoretical instance with 100 mushroom samples and 60 are edible while 40 are poisonous. We already know entropy would be high with distinct almost half and half split between classifications, but for claririty, the entropy would be caculated: 
-
-
-$$
-\text{Entropy}(S) = -\left(\frac{60}{100}\right) \log_2 \left(\frac{60}{100}\right) - \left(\frac{40}{100}\right) \log_2 \left(\frac{40}{100}\right)
-$$
+For example, if we consider a dataset with 100 mushroom samples and 60 are edible while 40 are poisonous, the entropy is: 
 
 $$
 \text{Entropy}(S) = -0.6 \log_2(0.6) - 0.4 \log_2(0.4) = 0.970
 $$
 
-Now if the algorithm splitted the data on the feature/attricute odor. If 30 mushrooms have a foul odor and all of them are poisonious (entropy = 0) and the remaining 70 have mixed classification (60 edible and 10 poisonous), the entropy would be calcauted as followed
+If the algorithm splits the data on odor. If 30 mushrooms have a foul odor and all of them are poisonious (entropy = 0) and the remaining 70 have mixed classification (60 edible and 10 poisonous), the entropy would be calcauted as followed
 
 $$
 \text{Entropy}(S_{\text{odor} \neq \text{foul}}) = -\left(\frac{60}{70}\right) \log_2 \left(\frac{60}{70}\right) - \left(\frac{10}{70}\right) \log_2 \left(\frac{10}{70}\right)
@@ -94,7 +89,7 @@ $$
 
 This means that splitting by odor is a significant reduction in entropy and reduces the impurity, therefore the decision tree algorithm would likely select this as the first feature to split on. 
 
-Lastly, before discussing Big O, gini impurity is calcualted as another way to measure how mixed a given split is in a dataset. It is a probability caculation signifiying if a random data point is incorrectly classificed in a dataset. Similar to entropy, if a set $S$ is pure and all one class (edible) then the gini impurity would be 0. Unlike entropy, the gini impurity maximum depends on the number of classes. If there are 2 classes, like the mushroom example, the maximum gini impurity is 0.5. The formula for gini imputiy is as follows:
+Gini impurity, used by CART, is a probability calculation signifiying if a random data point is incorrectly classificed in a dataset. Similar to entropy, if a set $S$ is pure and all one class (edible) then the gini impurity would be 0. Unlike entropy, the gini impurity maximum depends on the number of classes. If there are 2 classes, like the mushroom example, the maximum gini impurity is 0.5. The formula for gini imputiy is as follows:
 
 $$
 \text{Gini}(S) = 1 - \sum_{c \in C} \left(p(c)\right)^2
@@ -111,14 +106,14 @@ Understanding how decision trees choose splits using entropy, information gain, 
 
 ### Time and Complexity: Big O
 
-Understanding the time and space complexity of the Decision Tree algorithm is essential for evaluating its scalability and performance. Decision Trees use a recursive, top-down, divide-and-conquer approach to build a model that classifies input data based on feature values. At each internal node, the algorithm searches for the best feature to split the data using a greedy strategy, which reduces impurity by calculating Gini impurity as outlined above. The time to train a decision tree depends on the number of samples `n`, the number of features or attributes `m`, and the depth of the tree. [^1] 
+Understanding the time and space complexity of the CART Decision Tree algorithm is essential for evaluating its scalability and performance. CART builds decision trees using a recursive, top-down, divide-and-conquer approach, classifying input data based on feature values. At each internal node, the algorithm uses a greedy search to find the feature and threshold that yield the greatest reduction in impurity, measured with Gini Impurity as described earlier. [^1] 
 
-Below is a table outlining the theoretical time and space complexity for each case in this report. A more detailed explanation for how these conclusions were reached is provided below along with the pseudocode.  
+The training time of a decision tree depends on the number of samples $n$, the number of features $m$, and the depth of the tree. The table below summarizes the theoretical time and space complexities for the best, average, and worst cases considered in this report. A detailed explanation and pseudocode follow.
 
 | Case |  Time Complexity | Space Used | 
 | :-- | :-- |  :-- |
-| Best | $O(n * m * log n)$ | $O(n)$ |
-| Average | $O(n * m * log n)$ | $O(n)$ |
+| Best | $O(n * m * \log n)$ | $O(n)$ |
+| Average | $O(n * m * \log n)$ | $O(n)$ |
 | Worst | $O(n^2 * m)$ | $O(n)$ |
 
 
@@ -126,40 +121,27 @@ Below is a table outlining the theoretical time and space complexity for each ca
 
 To better understand where the logarithmic depth and nested evaluations come from, consider the following simplified pseudocode for growing a binary decision tree using the CART algorithm: [^8]:
 
-```d = 0
-endtree = 0
-
-Note(0) = 1, Node(1) = 0, Node(2) = 0
-
-while endtree < 1
-    if Node(2d-1) + Node(2d) + .... + Node(2d+1-2) = 2 - 2d+1   
-        endtree = 1
-
-    else
-        do i = 2d-1, 2d, .... , 2d+1-2
-            if Node(i) > -1
-                Split tree
-
-            else 
-                Node(2i+1) = -1
-                Node(2i+2) = -1
-
-            end if
-
-        end do
-
-    end if
-
-d = d + 1
-
-end while
 ```
+function build_tree(data, depth):
 
-Understanding the time complexity of the Decision Tree algorithm involves analyzing how the tree is built and how features are evaluated at each node. At a high level, the tree is constructed recursively through a series of splits, with each level of the tree representing a deeper depth of classification. The outer `while` loop corresponds to tree depth, which grows logarithmically in the best and average cases—resulting in $O(\log n)$ depth. The inner `for` loop processes all nodes at each depth level, with the number of nodes doubling at each level (approximately 2^d nodes at depth d). For each node, the algorithm evaluates `m` features to find the best split, and this evaluation typically involves sorting or scanning through the dataset, which has a time complexity of $O(n log n)$ per feature. As a result, the overall time complexity for building the tree is $O(n * m * log n)$ in the best and average cases. [^4]
+    if stopping_criteria_met(data, depth):
+        return create_leaf(data)
 
-In the worst case, where the tree becomes unbalanced and each split removes only one sample (due to identical features or poor splits), the depth can be up to `n`, and the complexity becomes $O(n² × m)$. This typically occurs when the data does not split evenly due to poor feature choice or when many samples have identical feature values. Despite this, most practical implementations like scikit-learn’s CART-based `DecisionTreeClassifier` use heuristics and stopping conditions to prevent the tree from growing inefficiently. [^4]
+    best_split = find_best_split(data)    // Evaluate m features
+    left_data, right_data = split(data, best_split)
 
-In terms of space complexity, the Decision Tree algorithm requires memory to store both the dataset and the resulting tree structure. Each node in the tree stores information such as the feature used for splitting, the threshold value, and the distribution of target labels. In the worst case, a fully grown binary tree with n samples can contain up to 2n - 1 nodes, leading to a space complexity of $O(n)$. This complexity is generally consistent across best, average, and worst cases because each data sample is typically used once and the structure of the tree grows linearly with the dataset size. However, deeper trees—often caused by overfitting or unbalanced splits—can increase memory usage due to the need to store more internal nodes, even though the overall space complexity remains $O(n)$.[^3]
+    node.left = build_tree(left_data, depth + 1)
+    node.right = build_tree(right_data, depth + 1)
+
+    return node
+```
+The recursion depth of the tree depends on how balanced the splits are. In the best and average cases, the dataset is split evenly at each step, leading to a balanced binary tree with a depth proportional to $\log n$. In the worst case, where splits are highly unbalanced, if a split removes only one sample, the depth can grow to $n$. This depth is important because it determines the number of times the algorithm must descend into child nodes during training. 
+
+At each node, the find_best_split() function evaluates all $m$ features to determine the optimal split. This evaluation may require sorting or scanning through the data at the node. A naïve implementation will require $O(n \log n)$ operations per feature if sorting is necessary, or $O(n)$ if only scanning is performed. Because every node at a given depth collectively processes the entire dataset, the total amount of work across all levels in a balanced tree sums to $O(n \cdot m \cdot \log n)$ in the best and average cases. [^4]
+
+In the worst-case scenario, where the tree becomes a degenerate chain of nodes, the number of node evaluations grows quadratically, resulting in a time complexity of $O(n^2 \cdot m)$. Practical implementations, such as scikit-learn’s CART-based DecisionTreeClassifier, typically use stopping conditions such as maximum depth or minimum samples per split to prevent such inefficient growth. [^4]
+
+The space complexity of a decision tree is $O(n)$ across all cases. This is because a binary tree with $n$ samples can have at most $2n - 1$ nodes, and each node stores a small, constant amount of information such as the split feature, threshold, and label distribution. While deeper trees require more internal nodes, the total memory required still scales linearly with the size of the dataset. [^3]
 
 ### Proof of Correctness: Loop of Invariant
 
