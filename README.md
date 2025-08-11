@@ -412,7 +412,7 @@ The second graph extends this analysis to larger datasets (up to 100,000 samples
 
 This graph shows the runtime behavior for large input sizes up to 100,000 samples, using the scikit-learn CART implementation. Both datasets show smooth, predictable increases in runtime, with the Diabetes dataset increasing more steeply because it has more features (16) compared to Iris (4). Even at the largest input size, runtimes stay under one second, showing that the scikit-learn version is highly efficient and scales well.
 
-![Large-n Runtime Behavior: Custom CART](images/large_n_sklearn.png)
+![Large-n Runtime Behavior: Custom CART](images/large_n_CART.png)
 
 
 This graph also shows the runtime behavior for large input sizes, but using the custom CART implementation. The Iris dataset remains consistently low in runtime due to having only four features, but the Diabetes dataset increases sharply, exceeding 50 seconds at the largest input size. This steep growth reflects the less optimized splitting strategy in the custom implementation, which becomes significantly slower as the number of features and samples increases.
@@ -435,12 +435,12 @@ To further evaluate algorithm performance, I created visuals comparing the measu
 
 ![Diabetes scikitlearn trend](images/skilearn_trend.png)
 
- The measured runtimes (blue) align closely with the $O(n^2)$ curve (orange), especially for larger $n$, indicating quadratic-like growth in practice. The $O(n log n)$ trendline (green) grows more slowly and diverges from the actual runtime, suggesting that this implementation’s performance on this dataset scales less efficiently than the theoretical optimal case.
+ The measured runtimes (blue) align closely with the $O(n^2)$ curve (orange), especially for larger $n$, indicating quadratic-like growth in practice. The $O(n \log n)$ trendline (green) grows more slowly and diverges from the actual runtime, suggesting that this implementation’s performance on this dataset scales less efficiently than the theoretical optimal case.
 
 
 ![Diabetes custom cart trend](images/custom_trend.png)
 
-The measured runtimes (blue) closely follow the $O(n log n)$ trendline (green) across the full range, suggesting near-theoretical scaling efficiency. The $O(n^2)$ curve (orange) grows more slowly than the measured times, indicating that while the algorithm is efficient, its real-world runtime behavior trends slightly higher than pure $O(n log n)$ growth.
+The measured runtimes (blue) closely follow the $O(n \log n)$ trendline (green) across the full range, suggesting near-theoretical scaling efficiency. The $O(n^2)$ curve (orange) grows more slowly than the measured times, indicating that while the algorithm is efficient, its real-world runtime behavior trends slightly higher than pure $O(n log n)$ growth.
 
 ### Accuracy Score
 
