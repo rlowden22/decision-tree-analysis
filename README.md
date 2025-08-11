@@ -112,9 +112,9 @@ The training time of a decision tree depends on the number of samples $n$, the n
 
 | Case |  Time Complexity | Space Used | 
 | :-- | :-- |  :-- |
-| Best | $O(n * m * \log n)$ | $O(n)$ |
-| Average | $O(n * m * \log n)$ | $O(n)$ |
-| Worst | $O(n^2 * m)$ | $O(n)$ |
+| Best | $O(n \cdot m \cdot \log n)$ | $O(n)$ |
+| Average | $O(n \cdot m \cdot \log n)$ | $O(n)$ |
+| Worst | $O(n^2 \cdot m)$ | $O(n)$ |
 
 
 ### Pseudocode: CART Algorithm 
@@ -122,50 +122,50 @@ The training time of a decision tree depends on the number of samples $n$, the n
 To better understand where the logarithmic depth and nested evaluations come from, consider the following simplified pseudocode for growing a binary decision tree using the CART algorithm: [^8]:
 
 ```
-function build_tree(data, depth):
+Initialize active_nodes = { root containing all samples }
+depth = 0
 
-    if stopping_criteria_met(data, depth):
-        return create_leaf(data)
+while active_nodes is not empty:
+    next_active_nodes = {}
 
-    best_split = find_best_split(data)    // Evaluate m features
-    left_data, right_data = split(data, best_split)
+    for each node in active_nodes:
+        if stopping_condition(node):
+            make_leaf(node)
+        else
+            (best_feature, threshold) = find_best_split(node.data)
+            (left_data, right_data) = split(node.data, best_feature, threshold)
+            create left_child, right_child
+            assign data
+            add left_child and right_child to next_active_nodes
 
-    node.left = build_tree(left_data, depth + 1)
-    node.right = build_tree(right_data, depth + 1)
+    active_nodes = next_active_nodes
+    depth = depth + 1
+end while
 
-    return node
 ```
-The recursion depth of the tree depends on how balanced the splits are. In the best and average cases, the dataset is split evenly at each step, leading to a balanced binary tree with a depth proportional to $\log n$. In the worst case, where splits are highly unbalanced, if a split removes only one sample, the depth can grow to $n$. This depth is important because it determines the number of times the algorithm must descend into child nodes during training. 
+The recursion depth of the tree corresponds to the number of iterations of the outer while loop not being empty and depends on how balanced the splits are. In the best and average cases, the dataset is split evenly at each step, leading to a balanced binary tree with a depth proportional to $\logn$ In the worst case, where splits are highly unbalanced and a split removes only one sample, the depth can grow to $n$. This depth is important because it determines the number of times the algorithm must descend into child nodes during training.
 
-At each node, the find_best_split() function evaluates all $m$ features to determine the optimal split. This evaluation may require sorting or scanning through the data at the node. A naïve implementation will require $O(n \log n)$ operations per feature if sorting is necessary, or $O(n)$ if only scanning is performed. Because every node at a given depth collectively processes the entire dataset, the total amount of work across all levels in a balanced tree sums to $O(n \cdot m \cdot \log n)$ in the best and average cases. [^4]
+Within each iteration of the while loop, the inner for node in active_nodes loop calls find_best_split(node.data) for each node at the current depth. This function evaluates all features to determine the optimal split, which may require sorting or scanning through the data at that node. If sorting is nessecary the implementation will require $O(n \log n)$ operations per feature  or $O(n)$ if only scanning is performed. Because every node at a given depth collectively processes the entire dataset, the total amount of work across all levels in a balanced tree sums to $O(n \cdot m \cdot \log n)$.[^4]
 
-In the worst-case scenario, where the tree becomes a degenerate chain of nodes, the number of node evaluations grows quadratically, resulting in a time complexity of $O(n^2 \cdot m)$. Practical implementations, such as scikit-learn’s CART-based DecisionTreeClassifier, typically use stopping conditions such as maximum depth or minimum samples per split to prevent such inefficient growth. [^4]
+In the worst-case scenario, where the tree becomes a degenerate chain of nodes, the number of node evaluations grows quadratically, resulting in a time complexity of $O(n^2 \cdot m)$. Practical implementations, such as scikit-learn’s CART-based `DecisionTreeClassifier`, typically use stopping conditions such as maximum depth or minimum samples per split to prevent such inefficient growth. [^4]
 
 The space complexity of a decision tree is $O(n)$ across all cases. This is because a binary tree with $n$ samples can have at most $2n - 1$ nodes, and each node stores a small, constant amount of information such as the split feature, threshold, and label distribution. While deeper trees require more internal nodes, the total memory required still scales linearly with the size of the dataset. [^3]
 
 ### Proof of Correctness: Loop of Invariant
 
-To confirm that the decision tree algorithm builds a valid tree that correctly classifies input data, we can use a loop invariant to establish correctness:
 
-Loop Invariant: At the beginning of each iteration of the while loop, all active nodes at depth `d` have data that has been partitioned according to the previous splits.
-
-Initialization: At depth d = 0, all data resides at the root node, and no splits have occurred yet. The invariant holds.
-
-Maintenance: Each node at depth `d` either becomes a leaf (if data is pure or splitting is no longer possible), or it is split based on the best feature, sending data to child nodes at depth `d+1`. The new data partition respects the split condition.
-
-Termination: The loop ends when all nodes are marked as leaves, ensuring that no further data can be split. At this point, every sample has a unique path from the root to a terminal leaf, which corresponds to a classification.
-
-This loop invariant confirms that the tree is built correctly and recursively partitions the dataset based on feature-based decisions. Since the algorithm uses deterministic splits based on calculated Gini impurity, each sample is guaranteed to be classified into a specific class at a leaf node.
 
 ## Implementation
 
-For this project, I used Python due to its robust ecosystem of machine learning libraries. I relied on pandas and numpy for data preprocessing, matplotlib for tree visualzation, excel for graphing, and scikit-learn for implementing the Decision Tree algorithm. This includes training the model and evaluating performance.I worked with 3 datasets from Kaggle:
+For this project, I used Python due to its robust ecosystem of machine learning libraries. I relied on pandas and numpy for data preprocessing, matplotlib for tree visualzation, excel for graphing, scikit-learn for implementing one version of the Decision Tree algorithm, and a second implmentation of CART algorithm from scratch. This includes training the model and evaluating performance. I worked with 3 datasets from Kaggle:
 
 * Mushroom dataset (~8000 samples, 22 features) [^17]
 * Iris dataset (100,000 samples, 4 features) [^15]
 * Clinical diabetes dataset (100,000 samples, 16 features) [^16]
 
 I began with the mushroom dataset, but due to its smaller size, I added larger datasets to better explore the algorithm's runtime and scalability as well as exploring what it means to have different number of features for classification. 
+
+### DecsionTreeClassifer (sci-kit learn)
 
 To build and train the model, I used scikit-learn’s built-in `DecisionTreeClassifier`, a common implementation of the CART (Classification and Regression Tree) algorithm. After researching popular workflows, I found this method was widely used in machine learning tasks. I used functions such as `train_test_split()` to split data, and `accuracy_score()` and `classification_report()` to evaluate how well the model performed on the test set. [^20] These tools allowed me to quickly understand the model's performance and adjust parameters when necessary. The decision tree algorithm provided an interpretable model that could accurately classify data with high reliability (accuracy values available in the empirical analysis). [^18]
 
@@ -237,33 +237,37 @@ def time_model_training(X, y, sample_sizes):
 ```
 This function evaluates how the model’s training time and accuracy change as the dataset grows. For each sample size, it splits the data, trains the model, records how long training takes, evaluates accuracy, and stores the results for empirical analysis.
 
+### CART Algorithm
+
 ## Empirical Analysis
 
-To evaluate the performance of the Decision Tree classification algorithm, I conducted experiments using three datasets from the kaggle website: first a Mushroom dataset (~8,000 samples, 23 features) [^17], a Iris dataset (100,000 samples, 4 features) [^15], and a clinical diabetes dataset (100,000, 16 features) [^16]. The classification tasks involved predicting whether a mushroom is edible or poisonous, identifying an iris species, and determining whether an individual has diabetes. This section provides empirical evidence of runtime behavior across varying sample sizes, highlights scalability trends, and supports the algorithm's theoretical $O(n·log(n))$ time complexity. I also report classification accuracy using Python’s built-in `accuracy_score` function to assess model effectiveness.
+To evaluate the performance of the Decision Tree classification algorithm, I conducted experiments using three datasets from the kaggle website: first a Mushroom dataset (~8,000 samples, 23 features) [^17], a Iris dataset (100,000 samples, 4 features) [^15], and a clinical diabetes dataset (100,000, 16 features) [^16]. The classification tasks involved predicting whether a mushroom is edible or poisonous, identifying an iris species, and determining whether an individual has diabetes. This section provides empirical evidence of runtime behavior across varying sample sizes, highlights scalability trends, and supports the algorithm's theoretical $O(n \cdot \log(n))$ time complexity. I also report classification accuracy using Python’s built-in `accuracy_score` function to assess model effectiveness.
 
 All data used to make the following graphs is in the attached excel workbook. 
 
 [Final Research Paper Workbook](results/5008%20final%20project%20graphs(Sheet1).csv)
 
-### Input(n) vs Runtime
+### DecsionTreeClassifer: sci-kit learn
 
-To evaluate the time complexity of the Decision Tree algorithm, I measured training time as the number of input samples increased across three datasets. The first graph focuses on smaller sample sizes (n ≤ 8000), highlighting early runtime behavior and variability between datasets. The second graph extends this analysis to larger datasets (up to 100,000 samples) using the Iris and Diabetes data to examine scalability and validate the expected quasi-linear growth pattern of O(n·log n). Polynomial trendlines were fitted to both graphs to help visualize runtime trends and assess consistency with theoretical expectations.
+#### Input(n) vs Runtime
 
-#### N <= 8000
+To evaluate the time complexity of the Decision Tree algorithm, I measured training time as the number of input samples increased across three datasets. The first graph focuses on smaller sample sizes (n ≤ 8000), highlighting early runtime behavior and variability between datasets. The second graph extends this analysis to larger datasets (up to 100,000 samples) using the Iris and Diabetes data to examine scalability and validate the expected quasi-linear growth pattern of $O(n \cdot \logn)$. Polynomial trendlines were fitted to both graphs to help visualize runtime trends and assess consistency with theoretical expectations.
+
+
 
 ![Runtime vs small n](images/small_n_runtime.png)
 
 
 This graph shows the runtime of the Decision Tree classifier on all three datasets with input sizes up to 8,000 samples. While individual runtime values varied slightly — likely due to background processes and hardware factors — the overall growth trend for each dataset is captured well by polynomial trendlines. The high R² values, particularly for the mushroom (0.9148) and diabetes (0.9595) datasets, support a runtime pattern consistent with O(n log n) complexity. These results reflect the expected behavior of Decision Tree training as data volume increases, even in smaller-scale experiments. This variation in runtime at smaller scales is one reason I decided to test larger datasets, such as the iris and diabetes datasets, to more clearly observe and compare runtime trends alongside the mushroom dataset.
 
-#### N <= 100,000
+
 
 ![Runtime vs large n](images/large_n_runtime.png)\
 
 This graph displays the runtime of the Decision Tree classifier on the larger iris and diabetes datasets, with sample sizes ranging from 1,000 to 100,000. Both curves follow a smooth upward trajectory, and the polynomial trendlines fit the data closely, with R² values of 0.989 for iris and 0.9954 for diabetes. These near-perfect fits support the expected $O(n log n)$ time complexity of Decision Tree training. The clarity and consistency of these results at larger scales confirm the theoretical growth behavior more reliably than the smaller-scale tests.
 
 
-### Decision Tree Accuracy
+#### Decision Tree Accuracy
 
 In this analysis, I used the `accuracy_score` function from the scikit-learn library to evaluate the performance of the Decision Tree classifier. This function calculates the ratio of correct predictions to the total number of predictions made, basically it measures how often the classifier was right. The score ranges from 0 to 1.0, where 1.0 represents perfect accuracy, values above 0.90 are considered great, 0.80–0.89 good, and anything below 0.70 often indicates poor performance. Several factors can influence a decision tree’s accuracy, including the quality and relevance of features, the balance of class labels, the size of the dataset, and tree depth. Since the datasets used in this project are relatively balanced and vary in size and feature count, accuracy served as a reliable and interpretable metric for comparing model performance across sample sizes. [^18]
 
@@ -272,16 +276,18 @@ In this analysis, I used the `accuracy_score` function from the scikit-learn lib
 
 This graph shows how accuracy varies with input size up to 8,000 samples for all three datasets. The mushroom dataset achieves near-perfect accuracy across all sample sizes, indicating that the features are highly informative and easily separable by the Decision Tree algorithm. The diabetes dataset shows high but slightly variable accuracy, stabilizing around 94–96%, while the iris dataset fluctuates more and maintains a lower accuracy around 89–92%. These results suggest that decision trees perform best on clean, well-structured data with many features and benefit from more samples when handling noisier or less separable data like the iris dataset.
 
-#### N <= 100,000
+
 ![accuracy vs large n](images/accuracy_large_n.png)
 
 This graph displays classification accuracy as input size increases up to 100,000 samples for the diabetes and iris datasets. Accuracy for both models stabilizes at larger sample sizes, with the diabetes classifier maintaining strong performance around 94–95%, and the iris classifier settling near 91%. The initial volatility smooths out as the model sees more data, indicating better generalization and reduced sensitivity to training variation. These results support the idea that Decision Trees benefit from larger datasets, particularly when working with more complex or less separable features like those in the iris dataset.
 
+### CART Algorithm
+
 ## Summary
 
-This project focused on implementing and analyzing the Decision Tree algorithm, a foundational supervised machine learning algorithm used for both classification and regression tasks. I chose this topic because of their use in machine learning amd across scietific research. My goal was to understand how they operate internally, specifically understanding the math behind how they use impurity measures to make splits, and evaluate their performance across different types of datasets. I implemented the model in Python using the scikit-learn library, which offered a clear and accessible way to build, train, and test Decision Tree classifiers for the first time. I applied this to three Kaggle datasets: a mushroom, iris, and diabetes datasets which varied in size and feature complexity to explore how the model performed.
+This project focused on implementing and analyzing the Decision Tree algorithm, a foundational supervised machine learning algorithm used for both classification and regression tasks. I chose this topic because of their use in machine learning and across scientific research. My goal was to understand how they operate internally, specifically understanding the math behind how they use impurity measures to make splits, and evaluate their performance across different types of datasets. I implemented the model in Python using the scikit-learn library, which offered a clear and accessible way to build, train, and test Decision Tree classifiers for the first time. I applied this to three Kaggle datasets: a mushroom, iris, and diabetes datasets which varied in size and feature complexity to explore how the model performed.
 
-The analysis revealed that decision trees perform best on clean, well-separated datasets like the mushroom data, where accuracy consistently reached 100%. The diabetes dataset also performed well, stabilizing between 94–96% accuracy across all sample sizes. The iris dataset, despite being scaled to 100,000 entries, maintained slightly lower and more variable accuracy, suggesting its features were less separable or more sensitive to sample variation. The runtime analysis supported the theoretical time complexity of $O(n*m*logn)$, especially as input size increased. The polynomial trend in the runtime graphs aligned with expectations for the greedy recursive splitting used in CART decision trees. These results reinforce the strengths of decision trees in handling structured, categorical data and highlight how dataset quality and size directly influence performance.
+The analysis revealed that decision trees perform best on clean, well-separated datasets like the mushroom data, where accuracy consistently reached 100%. The diabetes dataset also performed well, stabilizing between 94–96% accuracy across all sample sizes. The iris dataset, despite being scaled to 100,000 entries, maintained slightly lower and more variable accuracy, suggesting its features were less separable or more sensitive to sample variation. The runtime analysis supported the theoretical time complexity of $O(n \cdot m \cdot \log n)$, especially as input size increased. The polynomial trend in the runtime graphs aligned with expectations for the greedy recursive splitting used in CART decision trees. These results reinforce the strengths of decision trees in handling structured, categorical data and highlight how dataset quality and size directly influence performance.
 
 Reflecting on this project, I learned a great deal about both the theory and implementation behind basic machine learning algorithms. I learned alot about how to work with pandas, numpy, matplot, and scikit-learn. it was also infomative to dive deep into 3 different datasets and adapt to different formats. Building the reusable functions while leaning on the python libraries provided hands on practice since these libraries are utilized in research and industry for CART tasks. This project not only strengthened my programming and data handling skills, but also deepened my understanding of algorithm evaluation and allowed me to begin familiarize myself with machine learning which I know will be valuable in future coursework, research, and real-world applications.
 
