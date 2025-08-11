@@ -442,6 +442,55 @@ To further evaluate algorithm performance, I created visuals comparing the measu
 
 The measured runtimes (blue) closely follow the $O(n \log n)$ trendline (green) across the full range, suggesting near-theoretical scaling efficiency. The $O(n^2)$ curve (orange) grows more slowly than the measured times, indicating that while the algorithm is efficient, its real-world runtime behavior trends slightly higher than pure $O(n log n)$ growth.
 
+### Ratio Table
+
+To better understand the runtime growth patterns of each implementation, I created ratio tables comparing execution time against theoretical growth rates for $O(n^2)$ and $O(n log n)$. By looking at how flat each ratio column stays as $n$ increases, it becomes easier to see which complexity the observed runtimes most closely match. For example, a relatively constant ratio in the $n log n$ column would suggest performance consistent with $n log n$ growth, while a flatter $n^2$ ratio points to quadratic scaling. 
+
+#### Ratio Table Diabetes Dataset: Scikit Learn implmentation
+
+| $n$       | Seconds  | Time / $n^2$         | Time / $(n log n)$   |
+|---------|----------|--------------------|--------------------|
+| 500     | 0.0045   | 1.80E-08           | 1.00E-06           |
+| 1000    | 0.0065   | 6.50E-09           | 6.52E-07           |
+| 2000    | 0.0080   | 2.00E-09           | 3.65E-07           |
+| 5000    | 0.0198   | 7.92E-10           | 3.22E-07           |
+| 10000   | 0.0363   | 3.63E-10           | 2.73E-07           |
+| 15000   | 0.0535   | 2.38E-10           | 2.57E-07           |
+| 20000   | 0.0724   | 1.81E-10           | 2.53E-07           |
+| 30000   | 0.1262   | 1.40E-10           | 2.83E-07           |
+| 40000   | 0.1866   | 1.17E-10           | 3.05E-07           |
+| 50000   | 0.2864   | 1.15E-10           | 3.67E-07           |
+| 60000   | 0.3175   | 8.82E-11           | 3.33E-07           |
+| 70000   | 0.4056   | 8.28E-11           | 3.60E-07           |
+| 80000   | 0.5502   | 8.60E-11           | 4.22E-07           |
+| 90000   | 0.6943   | 8.57E-11           | 4.69E-07           |
+| 100000  | 0.8698   | 8.70E-11           | 5.24E-07           |
+
+In this table for the Scikit-Learn implementation the (Time / (n log n)) column stays relatively consistent across different input sizes, suggesting that the observed performance aligns more closely with $n log n$ complexity. In contrast, the (Time / $n^2$) column drops sharply as $n$ increases, indicating that quadratic growth is not as good of a fit. This analysis supports the expectation that Scikit-Learn’s optimized decision tree implementation achieves near $n log n$ scaling, even on a dataset with 16 features such as the diabetes dataset. 
+
+#### Ratio Table Diabetes Dataset: custom CART implmentation
+
+| $n$       | Seconds  | Time / $n^2$         | Time / $(n log n)$   |
+|---------|----------|--------------------|--------------------|
+| 500     | 0.2504   | 1.00E-06           | 5.57E-05           |
+| 1000    | 0.4579   | 4.58E-07           | 4.59E-05           |
+| 2000    | 0.6490   | 1.62E-07           | 2.96E-05           |
+| 5000    | 1.7008   | 6.80E-08           | 2.77E-05           |
+| 10000   | 3.5840   | 3.58E-08           | 2.70E-05           |
+| 15000   | 5.8500   | 2.60E-08           | 2.81E-05           |
+| 20000   | 7.5700   | 1.89E-08           | 2.64E-05           |
+| 30000   | 11.0500  | 1.23E-08           | 2.48E-05           |
+| 40000   | 16.9500  | 1.06E-08           | 2.77E-05           |
+| 50000   | 23.2300  | 9.29E-09           | 2.98E-05           |
+| 60000   | 29.7400  | 8.26E-09           | 3.12E-05           |
+| 70000   | 37.0400  | 7.56E-09           | 3.28E-05           |
+| 80000   | 44.8000  | 7.00E-09           | 3.43E-05           |
+| 90000   | 45.3390  | 5.59E-09           | 3.06E-05           |
+| 100000  | 55.5700  | 5.56E-09           | 3.35E-05           |
+
+In this ratio table for the custom CART implementation, it shows a different trend compared to the Scikit-Learn table. The (Time / $n^2)column stays relatively flat across increasing input sizes, which suggests the runtime is growing closer to quadratic complexity. The (Time / $(n log n)$) column increases steadily, meaning the performance does not match the more efficient growth we expect for an optimized decision tree. This supports the observation that the exhaustive threshold scanning in the `best_split` function introduces significant overhead, making the algorithm scale poorly on larger datasets.
+
+
 ### Accuracy Score
 
 In this analysis, I used the `accuracy_score` function from the scikit-learn library to evaluate the performance of the CART algorithm. This function calculates the ratio of correct predictions to the total number of predictions made, basically it measures how often the classifier was right. The score ranges from 0 to 1.0, where 1.0 represents perfect accuracy, values above 0.90 are considered great, 0.80–0.89 good, and anything below 0.70 often indicates poor performance. 
@@ -466,7 +515,7 @@ Across both implementations, classification accuracy remains high and stable onc
 
 This project focused on implementing and analyzing the Decision Tree algorithm, a foundational supervised machine learning method used for both classification and regression tasks. I chose this topic because of its widespread use in machine learning and scientific research, as well as my interest in understanding its inner workings. My goal was to explore how decision trees operate internally, specifically, how they use impurity measures to determine optimal splits—and to evaluate their performance across different datasets. To do this, I implemented two versions of the model in Python: one using the scikit-learn library, which provided a clear and accessible baseline, and another custom implementation of the CART algorithm built from scratch. I then tested both models on three Kaggle datasets: mushroom, iris, and diabetes—which varied in sample size and feature complexity, to compare their behavior and performance.
 
-For smaller input sizes (n ≤ 8,000), both implementations showed relatively modest runtimes, though my custom CART was noticeably slower, especially on datasets with more features and complex decision boundaries. This difference became much more pronounced in the large-n experiments (n up to 100,000), where scikit-learn maintained sub-second runtimes for most cases, while my custom implementation scaled poorly—reaching over 50 seconds for the largest diabetes dataset. The main bottleneck appears to be in my `best_split` function, which exhaustively scanned all thresholds for every feature at each node. While correct in functionality, this approach has high computational overhead compared to scikit-learn’s optimized and vectorized methods.
+For smaller input sizes (n ≤ 8,000), both implementations showed relatively modest runtimes, though my custom CART was noticeably slower, especially on datasets with more features and complex decision boundaries. This difference became much more pronounced in the large-n experiments (n up to 100,000), where scikit-learn maintained sub-second runtimes for most cases, while my custom implementation scaled poorly—reaching over 50 seconds for the largest diabetes dataset. The main bottleneck appears to be in my `best_split` function, which exhaustively scanned all thresholds for every feature at each node. While correct in functionality, this approach has high computational overhead compared to scikit-learn’s optimized methods. Although decision tree training is theoretically $O(n log n)$, my empirical results for the custom CART showed scaling much closer to $O(n²)$, especially for high-feature datasets, which aligns with the quadratic-like growth seen in the ratio table analysis.
 
 The datasets themselves represented different levels of complexity. The mushroom dataset, though large in the small-n experiments, is relatively simple in structure, leading to consistently high accuracy. The iris dataset has fewer features but presents overlapping class boundaries, making classification more challenging. The diabetes dataset, with its higher dimensionality and mixed feature types, proved the most computationally expensive for my custom CART, highlighting how feature count and complexity can strongly influence training time.
 

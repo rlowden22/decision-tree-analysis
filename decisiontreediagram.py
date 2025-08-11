@@ -30,6 +30,6 @@ plot_tree(model,
           rounded=True)
 plt.title("Simplified Decision Tree (Max Depth = 5)")
 
-# Save the plot for your report
+# Save the plot for my report
 plt.savefig("images/tree_diagram_depth5.png", dpi=300, bbox_inches='tight')
 plt.show()
