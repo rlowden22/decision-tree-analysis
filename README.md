@@ -12,7 +12,7 @@ In this report, I examine decision tree algorithms, a broad class of supervised 
 
 Classification and Regression Trees (CART) are a specific implementation of decision tree algorithms designed for both classification and regression problems. In classification, CART predicts categorical outcomes, for example, determining whether a mushroom is edible or poisonous based on attributes such as color, size, and odor[^3]. In regression, it predicts continuous values, such as estimating house prices from features like square footage and location[^4]. The algorithm recursively selects the most informative feature at each node using a predefined criterion (Gini impurity for classification, variance reduction for regression) to optimize split quality[^5]. One of CART’s key advantages is its interpretability; its explicit, rule-based structure makes it possible to trace each decision path, making it especially valuable in applications ranging from medical diagnosis to economic forecasting and weather prediction, etc [^6].
 
-This report provides a focused analysis of decision tree algorithms, covering their historical development, theoretical foundations, practical implementations, and empirical performance. It begins with a brief history and survey of real-world applications, followed by an explanation of data-splitting criteria and an analysis of computational complexity using CART pseudocode. The implementation section compares two approaches: a scikit-learn `DecisionTreeClassifier` and a custom CART algorithm applied to three datasets. An empirical analysis evaluates model accuracy and scalability across varying dataset sizes and feature counts. The report concludes with a discussion of implementation challenges, key findings, and recommendations for future work.
+This report provides a focused analysis of decision tree algorithms, covering their historical development, theoretical foundations, practical implementations, and empirical performance. It begins with a brief history and survey of real-world applications, followed by an explanation of data-splitting criteria and an analysis of computational complexity using CART pseudocode. The implementation section compares two approaches: a scikit-learn `DecisionTreeClassifier` and a custom CART algorithm applied to three datasets. An empirical analysis evaluates model accuracy and scalability across varying dataset sizes and feature counts. The report concludes with a sumamry including key and implementation challenges.
 
 ### Algorithm Development 
 Decision Trees have a rich history in machine learning, with origins dating back to the 1960s. One of the earliest methods, Hunt’s Algorithm, was developed to model human inductive learning, replicating how people make decisions based on prior experiences. Introduced by J. Hunt and colleagues, this work laid the foundation for modern decision tree methods. [^7]
@@ -132,7 +132,7 @@ while active_nodes is not empty:
         if stopping_condition(node):
             make_leaf(node)
         else
-            (best_feature, threshold) = find_best_split(node.data)
+            (best_feature, threshold) = find_best_split(node.data) //gini impurity
             (left_data, right_data) = split(node.data, best_feature, threshold)
             create left_child, right_child
             assign data
@@ -143,17 +143,30 @@ while active_nodes is not empty:
 end while
 
 ```
-The recursion depth of the tree corresponds to the number of iterations of the outer while loop not being empty and depends on how balanced the splits are. In the best and average cases, the dataset is split evenly at each step, leading to a balanced binary tree with a depth proportional to $\logn$ In the worst case, where splits are highly unbalanced and a split removes only one sample, the depth can grow to $n$. This depth is important because it determines the number of times the algorithm must descend into child nodes during training.
+The recursion depth of the tree corresponds to the number of iterations of the outer `while` loop not being empty and depends on how balanced the splits are. In the best and average cases, the dataset is split evenly at each step, leading to a balanced binary tree with a depth proportional to $logn$ In the worst case, where splits are highly unbalanced and a split removes only one sample, the depth can grow to $n$. This depth is important because it determines the number of times the algorithm must descend into child nodes during training.
 
-Within each iteration of the while loop, the inner for node in active_nodes loop calls find_best_split(node.data) for each node at the current depth. This function evaluates all features to determine the optimal split, which may require sorting or scanning through the data at that node. If sorting is nessecary the implementation will require $O(n \log n)$ operations per feature  or $O(n)$ if only scanning is performed. Because every node at a given depth collectively processes the entire dataset, the total amount of work across all levels in a balanced tree sums to $O(n \cdot m \cdot \log n)$.[^4]
+Within each iteration of the `while` loop, the inner `for` loop calls `find_best_split`(node.data) for each active_node at the current depth. This function evaluates all features to determine the optimal split, which may require sorting or scanning through the data at that node. If sorting is nessecary the implementation will require $O(n \log n)$ operations per feature  or $O(n)$ if only scanning is performed. Because every node at a given depth collectively processes the entire dataset, the total amount of work across all levels in a balanced tree sums to $O(n \cdot m \cdot \log n)$.[^4]
 
-In the worst-case scenario, where the tree becomes a degenerate chain of nodes, the number of node evaluations grows quadratically, resulting in a time complexity of $O(n^2 \cdot m)$. Practical implementations, such as scikit-learn’s CART-based `DecisionTreeClassifier`, typically use stopping conditions such as maximum depth or minimum samples per split to prevent such inefficient growth. [^4]
+In the worst-case scenario, where the tree becomes a chain of nodes, the number of node evaluations grows quadratically, resulting in a time complexity of $O(n^2 \cdot m)$. Practical implementations, such as scikit-learn’s CART-based `DecisionTreeClassifier`, typically use stopping conditions such as maximum depth or minimum samples per split to prevent such inefficient growth. [^4]
 
 The space complexity of a decision tree is $O(n)$ across all cases. This is because a binary tree with $n$ samples can have at most $2n - 1$ nodes, and each node stores a small, constant amount of information such as the split feature, threshold, and label distribution. While deeper trees require more internal nodes, the total memory required still scales linearly with the size of the dataset. [^3]
 
 ### Proof of Correctness: Loop of Invariant
 
+**Loop Invariant:** At the start of each iteration of the `while` loop at depth `d`:
 
+1. Every node in `active_nodes` contains samples that match its path of previous splits.
+2. All samples appear in exactly one node, they are never duplicated or lost. 
+3. For all nodes still in `active_nodes`, if it terminated right now, it would be labeled based on the current samples the node contains. 
+4. A node already marked as a leaf has a final classification label which match all other samples in the node. 
+
+**Initialization:** At `depth = 0`, before the first loop iteration, `active_nodes = {root}`, which contains all samples of the given dataset. No splits have occured, so the invariant holds. 
+
+**Maintenance:** Assume the invariant holds at the start of each iteration.
+For each node in `active_nodes`, if the stopping condition is met, a leaf node is created and a label is assigned without altering the data, so the invariant holds. 
+* If the node is split, `split(node.data, best_feature, threshold` partitions the node’s samples into `left_data` and `right_data` without duplication or loss of data. Each child node inherits exactly one subset of data and replaces the parent in `active_nodes.` Their data still matches the path of splits leading to them. Existing leaves remain correct and the invariant still holds for the next iteration.
+
+**Termination:** The loop ends when `active_nodes` is empty. By the invariant, every sample has followed a unique path from the root to exactly one leaf, and no sample is misassigned. Therefore, the algorithm correctly represents the tree's partitioning and can classify any sample consistently.
 
 ## Implementation
 
