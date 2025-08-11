@@ -1,11 +1,16 @@
+# Rowan Lowden
+# 5008: Summer 2025
+# Final Project Code: Decision Tree implmentation on 3 datasets
+# This code implements an original CART Decision Tree model on various datasets.
+
 import pandas as pd
 import numpy as np
 import time
-from cart import DecisionTree  # your custom implementation
+from cart import DecisionTreeRowan  # your custom implementation
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# Load the mushroom dataset
+# Load the dataset
 df = pd.read_csv("data/mushrooms.csv")
 
 # Split features and labels
@@ -34,15 +39,15 @@ for size in sample_sizes:
 
     # Train the custom Decision Tree and time it
     start_time = time.time()
-    clf = DecisionTree(max_depth=10)  # You can adjust depth
+    clf = DecisionTreeRowan(max_depth=10)  # depth can be adjusted
     clf.fit(X_train, y_train)
     end_time = time.time()
 
     duration = end_time - start_time
 
-    # Make predictions (if your DecisionTree has predict)
+    # Make predictions
     y_pred = clf.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
+    accuracy = accuracy_score(y_test, y_pred) # Calculate accuracy using sklearn's accuracy_score
 
     print(f"Time taken: {duration:.4f} seconds")
     print(f"Accuracy: {accuracy:.4f}")

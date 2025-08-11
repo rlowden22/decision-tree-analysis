@@ -1,6 +1,6 @@
 # Rowan Lowden
 # 5008: Summer 2025
-# Final Project Code: Decision Tree implmentation on 2 datasets
+# Final Project Code: Decision Tree implmentation with sci-kit learn on 3 datasets
 
 
 from model_utils import load_data, split_data, train_decision_tree, evaluate_model, save_results_to_csv, time_model_training 

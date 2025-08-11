@@ -1,7 +1,8 @@
 # Rowan Lowden
 # 5008: Summer 2025
-# Final Project Code: Decision Tree implmentation on mushroom data
-# is the mushroom edible or poisnoius? 
+# Final Project Code: Decision Tree implmentation on 3 datasets
+# This code implements a Decision Tree model using scikit-learn on various datasets.
+
 
 #load the mushrooms
 #split the data into training and test sets
