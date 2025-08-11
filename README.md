@@ -249,7 +249,140 @@ def time_model_training(X, y, sample_sizes):
 ```
 This function evaluates how the model’s training time and accuracy change as the dataset grows. For each sample size, it splits the data, trains the model, records how long training takes, evaluates accuracy, and stores the results for empirical analysis.
 
-### CART Algorithm
+### CART Algorithm (from scratch)
+
+You can find the original code for this in [CART](cart.py) and [Main](cart_main.py).
+
+Although I did not initially plan to implement two versions of the decision tree algorithm, starting with scikit-learn’s built-in DecisionTreeClassifier gave me a strong foundational understanding of the workflow, key parameters, and performance evaluation. This baseline experience made it much easier to translate the theory into code when I later implemented the CART (Classification and Regression Tree) algorithm from scratch in Python. My custom version uses its own Node structure and recursive tree-building logic to split datasets based on Gini impurity. Unlike the scikit-learn implementation, which abstracts away these details, my version explicitly handles each step: choosing the best split, partitioning the data, and assigning labels to leaf nodes.
+
+The foundation of my implementation is the Node class, which represents both decision and leaf nodes:
+
+```python 
+""" Defines the Node class for the Decision Tree. Either a decision node or a leaf node."""
+class Node:
+    def __init__(self, feature=None, threshold=None, left=None, right=None, *, value=None):
+        self.feature = feature          # index of feature to split on
+        self.threshold = threshold      # value of the split
+        self.left = left                # left subtree/child
+        self.right = right              # right subtree/child
+        self.value = value              # class label if it's a leaf
+        
+    # If value is not None and has no children, this is a leaf node
+    def is_leaf_node(self):
+        return self.value is not None
+
+```
+Each node stores the feature index and threshold used for splitting, references to left and right child nodes, and a value if the node is a leaf. Internal nodes direct the flow of data down the tree, while leaf nodes hold the final class label.
+
+The training process begins with the `fit()` method, which calls the recursive `_build_tree()` fucntion. This function is responsible for creating the tree by splitting the dataset until stopping criteria are met:
+
+```python
+def fit(self, X, y):
+    self.root = self._build_tree(X, y)
+
+ def _build_tree(self, X, y, depth=0): 
+        num_samples, num_features = X.shape # Get the number of samples and features
+        num_labels = len(np.unique(y)) # countsof unique labels in dataset
+
+        # stopping criteria to make a leaf node
+        # If max depth is reached, or if all samples belong to the same class, etc
+        if (depth >= self.max_depth or num_labels == 1 or num_samples < self.min_samples_split):
+            leaf_value = self._most_common_label(y)
+            return Node(value=leaf_value)
+
+        # Find the best feature and threshold to split on based on GIni impurity
+        best_feat, best_thresh = self._best_split(X, y)
+        if best_feat is None:
+            return Node(value=self._most_common_label(y))
+
+        # Create a decision node with the best feature and threshold
+        left_idxs = X[:, best_feat] < best_thresh
+        right_idxs = ~left_idxs # Get the indices for left and right splits
+
+        # Recursively build the left and right subtrees
+        left = self._build_tree(X[left_idxs], y[left_idxs], depth + 1)
+        right = self._build_tree(X[right_idxs], y[right_idxs], depth + 1)
+        # Return a new Node with the best feature and threshold, and the left/right subtrees
+        return Node(feature=best_feat, threshold=best_thresh, left=left, right=right)
+
+```
+At each node, `_build_tree()` determines whether further splitting is possible based on tree depth, sample size, or class purity. If so, it finds the best split and recursively builds the left and right subtrees. If not, it creates a leaf with the most common class label for that subset.
+
+Selecting the best split is done in `_best_split()`, which examines all feature–threshold combinations and calculates their Gini gain:
+
+```python
+    """ Finds the best feature and threshold to split the data based on Gini impurity. """
+    def _best_split(self, X, y):
+        best_gain = -1 # Initialize best gain to a low value so any will be better
+        best_feat, best_thresh = None, None
+
+        for feature_index in range(X.shape[1]):
+            thresholds = np.unique(X[:, feature_index])
+            #test each threshold for the current feature
+            for threshold in thresholds:
+                # Create left and right splits based on the threshold
+                left_idxs = X[:, feature_index] < threshold
+                right_idxs = ~left_idxs
+
+                # If either split is empty, skip this threshold
+                if len(y[left_idxs]) == 0 or len(y[right_idxs]) == 0:
+                    continue
+
+                # Calculate the Gini gain from this split
+                gain = self._gini_gain(y, y[left_idxs], y[right_idxs])
+
+                # If this gain is better than the best found so far, update best values
+                if gain > best_gain:
+                    best_gain = gain
+                    best_feat = feature_index
+                    best_thresh = threshold
+
+        return best_feat, best_thresh
+```
+This method evaluates each possible split and chooses the one that produces the largest reduction in impurity. While this approach is very computationally expensive by testing all option, it ensures that the split chosen is optimal for the current node.
+
+The impurity of a set and the gain from splitting it are calculated using `_gini()` and `_gini_gain()`:
+
+```python
+
+   """ Calculates the Gini impurity for a set of labels (y). """
+    def _gini(self, y):
+        counts = np.bincount(y) # Count occurrences of each class label
+        probs = counts / len(y) # Calculate probabilities of each class
+        return 1 - np.sum(probs ** 2) #gini formula
+
+    """ Calculates the Gini gain from a split. How much the Gini impurity is reduced by splitting the data from parent to child. """
+    def _gini_gain(self, parent, left, right):
+        weight_left = len(left) / len(parent) #proportion of samples in left split
+        weight_right = len(right) / len(parent) #proportion of samples in right split
+        return self._gini(parent) - (weight_left * self._gini(left) + weight_right * self._gini(right))
+
+```
+The Gini impurity measures how mixed the classes are in a node, and the gain measures how much a split reduces impurity, weighted by the size of the child nodes.
+
+Once the tree is trained, predictions are made by starting at the root and following split conditions down to a leaf. This is handled by `predict()` and `_traverse_tree()`:
+
+``` python
+
+    """ Predicts the class labels for a set of samples. Uses the trained tree to make predictions. """
+    def predict(self, X): # X is a 2D NumPy array of samples, collects predicitions to compare with true labels
+        return np.array([self._traverse_tree(x, self.root) for x in X])
+
+    """ Traverses the tree to make a prediction for a single sample for the predict fucntion. """
+    def _traverse_tree(self, x, node):
+        if node.is_leaf_node():  # If it's a leaf node, return the class 
+            return node.value
+        if x[node.feature] < node.threshold: # if the feature value is less than the threshold, go left
+            return self._traverse_tree(x, node.left)
+        else: # if the feature value is greater than or equal to the threshold, go right
+            return self._traverse_tree(x, node.right)
+
+```
+For each sample, the traversal logic checks the relevant feature against the node’s threshold, then moves left or right accordingly until a leaf is reached. The label stored at that leaf becomes the prediction. This is helpful for calculating the accuracy score using the built in sci-kit learn tool.
+
+This from-scratch CART implementation mirrors the theoretical process of decision tree construction: recursively partitioning the feature space to maximize class separation at each step. It also made the algorithm’s trade-offs more tangible — for example, the impact of maximum depth, minimum samples per split, and the computational cost of evaluating all possible thresholds.
+
+
 
 ## Empirical Analysis
 
