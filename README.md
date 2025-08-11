@@ -386,47 +386,81 @@ This from-scratch CART implementation mirrors the theoretical process of decisio
 
 ## Empirical Analysis
 
-To evaluate the performance of the Decision Tree classification algorithm, I conducted experiments using three datasets from the kaggle website: first a Mushroom dataset (~8,000 samples, 23 features) [^17], a Iris dataset (100,000 samples, 4 features) [^15], and a clinical diabetes dataset (100,000, 16 features) [^16]. The classification tasks involved predicting whether a mushroom is edible or poisonous, identifying an iris species, and determining whether an individual has diabetes. This section provides empirical evidence of runtime behavior across varying sample sizes, highlights scalability trends, and supports the algorithm's theoretical $O(n \cdot \log(n))$ time complexity. I also report classification accuracy using Python’s built-in `accuracy_score` function to assess model effectiveness.
+To evaluate the performance of the Decision Tree classification algorithm, I conducted experiments using three datasets from Kaggle: a Mushroom dataset (~8,000 samples, 23 features) [^17], a Iris dataset (100,000 samples, 4 features) [^15], and a clinical diabetes dataset (100,000, 16 features) [^16]. The classification tasks involved predicting whether a mushroom is edible or poisonous, identifying an iris species, and determining whether an individual has diabetes. This section provides empirical results of runtime behavior across varying sample sizes and different CART implmentations, highlights scalability trends, and supports the algorithm's theoretical $O(n \cdot \log(n))$ time complexity. I also report classification accuracy using Python’s built-in `accuracy_score` function to assess model effectiveness.
 
 All data used to make the following graphs is in the attached excel workbook. 
 
-[Final Research Paper Workbook](results/5008%20final%20project%20graphs(Sheet1).csv)
+[Final Research Paper Workbook](results/5008%20final%20project%20graphs(CART).csv)
 
-### DecsionTreeClassifer: sci-kit learn
-
-#### Input(n) vs Runtime
-
-To evaluate the time complexity of the Decision Tree algorithm, I measured training time as the number of input samples increased across three datasets. The first graph focuses on smaller sample sizes (n ≤ 8000), highlighting early runtime behavior and variability between datasets. The second graph extends this analysis to larger datasets (up to 100,000 samples) using the Iris and Diabetes data to examine scalability and validate the expected quasi-linear growth pattern of $O(n \cdot \logn)$. Polynomial trendlines were fitted to both graphs to help visualize runtime trends and assess consistency with theoretical expectations.
+### Small-n Runtime Behavior
 
 
+To evaluate the time complexity of the Decision Tree algorithm, I measured training time as the number of input samples increased across three datasets. The first set of graphs focus on smaller sample sizes (n ≤ 8000), highlighting early runtime behavior and variability between datasets. 
 
-![Runtime vs small n](images/small_n_runtime.png)
+![Small-n Runtime Behavior: Scikit Learn](images/small_n_sklearn.png)
 
+This graph shows the small-n runtime behavior (n ≤ 8000) for the scikit-learn implementation. All three datasets exhibit roughly linear scaling in this range, with the Iris dataset consistently training the fastest due to its low feature count of 4. The Mushroom and Diabetes datasets take slightly longer, with the Diabetes dataset showing a steady increase in runtime proportional to n, likely due to its higher dimensionality of 16 features. Minor fluctuations in the curves can be attributed to system variability and caching effects at small sample sizes.
 
-This graph shows the runtime of the Decision Tree classifier on all three datasets with input sizes up to 8,000 samples. While individual runtime values varied slightly — likely due to background processes and hardware factors — the overall growth trend for each dataset is captured well by polynomial trendlines. The high R² values, particularly for the mushroom (0.9148) and diabetes (0.9595) datasets, support a runtime pattern consistent with O(n log n) complexity. These results reflect the expected behavior of Decision Tree training as data volume increases, even in smaller-scale experiments. This variation in runtime at smaller scales is one reason I decided to test larger datasets, such as the iris and diabetes datasets, to more clearly observe and compare runtime trends alongside the mushroom dataset.
+![Small-n Runtime Behavior: Custom CART](images/small_n_CART.png)
 
+This graph also shows runtime behavior for small-n, but for the custom CART implementation. Compared to scikit-learn, the custom algorithm exhibits significantly higher runtimes, especially for the Diabetes dataset, which grows rapidly even at small n due to its 16 features and less optimized split-finding method. The Iris and Mushroom datasets remain much faster, with runtimes under 0.5 seconds, though still slower than the scikit-learn implementation. The pronounced spikes and variability in the Diabetes curve suggest additional overhead from repeated feature evaluations and lack of algorithmic optimizations present in scikit-learn.
 
+### Large-n Runtime Behavior
+The second graph extends this analysis to larger datasets (up to 100,000 samples) using the Iris and Diabetes data to examine scalability and validate the expected quasi-linear growth pattern of $O(n \cdot \logn)$.
 
-![Runtime vs large n](images/large_n_runtime.png)\
+![Large-n Runtime Behavior: Scikit Learn](images/large_n_sklearn.png)
 
-This graph displays the runtime of the Decision Tree classifier on the larger iris and diabetes datasets, with sample sizes ranging from 1,000 to 100,000. Both curves follow a smooth upward trajectory, and the polynomial trendlines fit the data closely, with R² values of 0.989 for iris and 0.9954 for diabetes. These near-perfect fits support the expected $O(n log n)$ time complexity of Decision Tree training. The clarity and consistency of these results at larger scales confirm the theoretical growth behavior more reliably than the smaller-scale tests.
+This graph shows the runtime behavior for large input sizes up to 100,000 samples, using the scikit-learn CART implementation. Both datasets show smooth, predictable increases in runtime, with the Diabetes dataset increasing more steeply because it has more features (16) compared to Iris (4). Even at the largest input size, runtimes stay under one second, showing that the scikit-learn version is highly efficient and scales well.
 
-
-#### Decision Tree Accuracy
-
-In this analysis, I used the `accuracy_score` function from the scikit-learn library to evaluate the performance of the Decision Tree classifier. This function calculates the ratio of correct predictions to the total number of predictions made, basically it measures how often the classifier was right. The score ranges from 0 to 1.0, where 1.0 represents perfect accuracy, values above 0.90 are considered great, 0.80–0.89 good, and anything below 0.70 often indicates poor performance. Several factors can influence a decision tree’s accuracy, including the quality and relevance of features, the balance of class labels, the size of the dataset, and tree depth. Since the datasets used in this project are relatively balanced and vary in size and feature count, accuracy served as a reliable and interpretable metric for comparing model performance across sample sizes. [^18]
-
-#### N <= 8000
-![accuracy vs large n](images/accuracy_small_n.png)
-
-This graph shows how accuracy varies with input size up to 8,000 samples for all three datasets. The mushroom dataset achieves near-perfect accuracy across all sample sizes, indicating that the features are highly informative and easily separable by the Decision Tree algorithm. The diabetes dataset shows high but slightly variable accuracy, stabilizing around 94–96%, while the iris dataset fluctuates more and maintains a lower accuracy around 89–92%. These results suggest that decision trees perform best on clean, well-structured data with many features and benefit from more samples when handling noisier or less separable data like the iris dataset.
+![Large-n Runtime Behavior: Custom CART](images/large_n_sklearn.png)
 
 
-![accuracy vs large n](images/accuracy_large_n.png)
+This graph also shows the runtime behavior for large input sizes, but using the custom CART implementation. The Iris dataset remains consistently low in runtime due to having only four features, but the Diabetes dataset increases sharply, exceeding 50 seconds at the largest input size. This steep growth reflects the less optimized splitting strategy in the custom implementation, which becomes significantly slower as the number of features and samples increases.
+
+### Implmentation Comparision: Scikit learn vs Custom 
+
+The following figures compare the runtime performance of the same dataset when processed with two different implementations of the CART algorithm: Scikit-learn’s optimized version and a custom implementation. These side-by-side results illustrate the significant difference in scalability and execution time, particularly as input sizes grow.
+
+![Iris Comparison](images/Iris_compare.png)
+
+For the Iris dataset, both algorithms show increasing runtime as the number of samples grows, but the custom CART is consistently slower. While Scikit-learn processes 100,000 samples in under 0.25 seconds, the custom implementation takes over 2.5 seconds, indicating significantly less efficient scaling.
+
+![Diabetes Comparison](images/diabetes_compare.png)
+
+The performance gap is even more pronounced with the Diabetes dataset. Scikit-learn completes training in under 1 second for the largest input size, whereas the custom CART exceeds 55 seconds. This suggests that the custom algorithm has much higher computational overhead and does not scale efficiently for larger datasets.
+
+### Runtime Complexity: Measured vs. Theoretical Growth
+
+To further evaluate algorithm performance, I created visuals comparing the measured runtimes for the diabetes dataset using the Scikit-Learn CART and the custom CART implementations against theoretical growth curves. For each dataset, I calculated trendlines for $O(n^2)$ and $O(n log n)$ using constants derived from the measured runtimes ($k$ values fitted to the largest input size). These plots highlight how each implementation scales for larger datasets, allowing direct comparison between the actual measurements and the expected theoretical complexity.
+
+![Diabetes scikitlearn trend](images/skilearn_trend.png)
+
+ The measured runtimes (blue) align closely with the $O(n^2)$ curve (orange), especially for larger $n$, indicating quadratic-like growth in practice. The $O(n log n)$ trendline (green) grows more slowly and diverges from the actual runtime, suggesting that this implementation’s performance on this dataset scales less efficiently than the theoretical optimal case.
+
+
+![Diabetes custom cart trend](images/custom_trend.png)
+
+The measured runtimes (blue) closely follow the $O(n log n)$ trendline (green) across the full range, suggesting near-theoretical scaling efficiency. The $O(n^2)$ curve (orange) grows more slowly than the measured times, indicating that while the algorithm is efficient, its real-world runtime behavior trends slightly higher than pure $O(n log n)$ growth.
+
+### Accuracy Score
+
+In this analysis, I used the `accuracy_score` function from the scikit-learn library to evaluate the performance of the CART algorithm. This function calculates the ratio of correct predictions to the total number of predictions made, basically it measures how often the classifier was right. The score ranges from 0 to 1.0, where 1.0 represents perfect accuracy, values above 0.90 are considered great, 0.80–0.89 good, and anything below 0.70 often indicates poor performance. 
+
+Because the same `accuracy_score` function was applied to predictions from both the scikit-learn CART and the custom CART implementations, and both were designed to use the same splitting criteria, the accuracy results were nearly identical across datasets. Any small differences would stem from variations in implementation details (such as handling of ties or stopping conditions) rather than from the scoring method itself.
+
+Several factors can influence a decision tree’s accuracy, including the quality and relevance of features, the balance of class labels, the size of the dataset, and tree depth. Since the datasets used in this project are relatively balanced and vary in size and feature count, accuracy served as a reliable and interpretable metric for comparing model performance across sample sizes. [^18]
+
+
+![accuracy scikit learn](images/accuracy_ski.png)
 
 This graph displays classification accuracy as input size increases up to 100,000 samples for the diabetes and iris datasets. Accuracy for both models stabilizes at larger sample sizes, with the diabetes classifier maintaining strong performance around 94–95%, and the iris classifier settling near 91%. The initial volatility smooths out as the model sees more data, indicating better generalization and reduced sensitivity to training variation. These results support the idea that Decision Trees benefit from larger datasets, particularly when working with more complex or less separable features like those in the iris dataset.
 
-### CART Algorithm
+
+![accuracy custom CART](images/accuracy_custom.png)
+
+This graph shows classification accuracy for the custom CART implementation as input size grows to 100,000 samples. The diabetes dataset consistently achieves high accuracy between 96–97% across all sample sizes, showing minimal variation after the initial increase. The iris dataset stabilizes around 93–94%, slightly outperforming the scikit-learn implementation for the same task. These results indicate that while the custom CART implementation matches or exceeds the accuracy levels of the optimized library version, the primary trade-off lies in the significantly longer runtimes observed in earlier runtime comparisons.
+
+Across both implementations, classification accuracy remains high and stable once sample sizes reach the upper range, with only minor fluctuations. The custom CART generally matches or slightly exceeds the accuracy of scikit-learn’s implementation, particularly for the iris dataset. However, given the substantial runtime differences observed earlier, the marginal accuracy gains from the custom approach may not justify the performance cost for large-scale applications. These findings highlight a common trade-off in algorithm design between execution efficiency and potential accuracy improvements.
 
 ## Summary
 

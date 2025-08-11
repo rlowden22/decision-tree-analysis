@@ -10,22 +10,41 @@ from cart import DecisionTreeRowan  # your custom implementation
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# Load the dataset
-df = pd.read_csv("data/mushrooms.csv")
+def load_data(filepath):
+    df = pd.read_csv(filepath)
 
-# Split features and labels
-X = df.drop("class", axis=1)
-y = df["class"]
+    if 'class' in df.columns:  # Mushroom
+        X = pd.get_dummies(df.drop('class', axis=1))
+        y = pd.factorize(df['class'])[0]  # edible/poisonous -> 0/1
 
-# Convert categorical features using one-hot encoding
-X = pd.get_dummies(X)
+    elif 'Species' in df.columns:  # Iris
+        X = df.drop('Species', axis=1)
+        y = pd.factorize(df['Species'])[0]
 
-# Convert to numpy arrays
-X = X.to_numpy()
-y = pd.factorize(y)[0]  # Convert 'edible'/'poisonous' to 0/1
+    elif 'diabetes' in df.columns:  # Clinical diabetes
+        X = pd.get_dummies(df.drop('diabetes', axis=1))
+        y = df['diabetes'].to_numpy()
+        if not np.issubdtype(y.dtype, np.number):
+            y = pd.factorize(y)[0]
+    else:
+        raise ValueError("Unrecognized dataset format.")
+
+    return X.to_numpy(), np.asarray(y)
+
+if __name__ == "__main__":
+    # Pick ONE file here:
+    filepath = "data/mushrooms.csv"
+    #filepath = "data/iris_100k.csv"
+    # filepath = "data/diabetes_dataset.csv"
+
+    X, y = load_data(filepath)
+    n = len(y)
+    print(f"Loaded: {filepath} | samples={n} | features={X.shape[1]}")
 
 # Define sample sizes for runtime testing
-sample_sizes = [500, 1000, 2000, 5000, 8000]
+sample_sizes = [500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 8000]
+# sample_sizes = [500, 1000, 2000, 5000, 10000, 15000, 20000,30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
+
 results = []
 
 # Loop through different sample sizes
