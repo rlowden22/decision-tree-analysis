@@ -488,7 +488,7 @@ In this table for the Scikit-Learn implementation the (Time / (n log n)) column 
 | 90000   | 45.3390  | 5.59E-09           | 3.06E-05           |
 | 100000  | 55.5700  | 5.56E-09           | 3.35E-05           |
 
-In this ratio table for the custom CART implementation, it shows a different trend compared to the Scikit-Learn table. The (Time / $n^2)column stays relatively flat across increasing input sizes, which suggests the runtime is growing closer to quadratic complexity. The (Time / $(n log n)$) column increases steadily, meaning the performance does not match the more efficient growth we expect for an optimized decision tree. This supports the observation that the exhaustive threshold scanning in the `best_split` function introduces significant overhead, making the algorithm scale poorly on larger datasets.
+In this ratio table for the custom CART implementation, it shows a different trend compared to the Scikit-Learn table. The (Time / $n^2$)column stays relatively flat across increasing input sizes, which suggests the runtime is growing closer to quadratic complexity. The (Time / $(n log n)$) column increases steadily, meaning the performance does not match the more efficient growth we expect for an optimized decision tree. This supports the observation that the exhaustive threshold scanning in the `best_split` function introduces significant overhead, making the algorithm scale poorly on larger datasets.
 
 
 ### Accuracy Score
