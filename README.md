@@ -380,7 +380,7 @@ Once the tree is trained, predictions are made by starting at the root and follo
 ```
 For each sample, the traversal logic checks the relevant feature against the node’s threshold, then moves left or right accordingly until a leaf is reached. The label stored at that leaf becomes the prediction. This is helpful for calculating the accuracy score using the built in sci-kit learn tool.
 
-This from-scratch CART implementation mirrors the theoretical process of decision tree construction: recursively partitioning the feature space to maximize class separation at each step. It also made the algorithm’s trade-offs more tangible — for example, the impact of maximum depth, minimum samples per split, and the computational cost of evaluating all possible thresholds.
+This from-scratch CART implementation mirrors the theoretical process of decision tree construction: recursively partitioning the feature space to maximize class separation at each step. It also made the algorithm’s trade-offs more tangible for me to understand. For example, the impact of maximum depth, number of features, and the computational cost of evaluating all possible thresholds.
 
 
 
