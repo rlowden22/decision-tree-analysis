@@ -406,7 +406,7 @@ This graph shows the small-n runtime behavior (n ≤ 8000) for the scikit-learn 
 This graph also shows runtime behavior for small-n, but for the custom CART implementation. Compared to scikit-learn, the custom algorithm exhibits significantly higher runtimes, especially for the Diabetes dataset, which grows rapidly even at small n due to its 16 features and less optimized split-finding method. The Iris and Mushroom datasets remain much faster, with runtimes under 0.5 seconds, though still slower than the scikit-learn implementation. The pronounced spikes and variability in the Diabetes curve suggest additional overhead from repeated feature evaluations and lack of algorithmic optimizations present in scikit-learn.
 
 ### Large-n Runtime Behavior
-The second graph extends this analysis to larger datasets (up to 100,000 samples) using the Iris and Diabetes data to examine scalability and validate the expected quasi-linear growth pattern of $O(n \cdot \logn)$.
+The second graph extends this analysis to larger datasets (up to 100,000 samples) using the Iris and Diabetes data to examine scalability and validate the expected quasi-linear growth pattern of $O(n \cdot log n)$.
 
 ![Large-n Runtime Behavior: Scikit Learn](images/large_n_sklearn.png)
 
