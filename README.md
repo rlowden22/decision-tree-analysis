@@ -5,7 +5,7 @@
 
 ## Introduction/Overview
 
-In this report, I examine decision tree algorithms, a broad class of supervised learning methods used in machine learning. Decision trees represent models as hierarchical structures, where data is recursively partitioned into smaller subsets based on measures of split quality. They are widely applied to both classification and regression tasks due to their simplicity, interpretability, and ability to handle both categorical and numerical data[^3]. A decision tree consists of a root node, branches, internal decision nodes, and leaf (terminal) nodes. The root node has no incoming branches, only outgoing branches leading to decision nodes that apply specific conditions to split the data into increasingly homogeneous subsets until a terminal node is reached[^1].
+In this report, I examine decision tree algorithms, a broad class of supervised learning methods used in machine learning. Decision trees represent models as hierarchical structures, where data is recursively partitioned into smaller subsets based on measures of split quality. They are widely applied to both classification and regression tasks due to their simplicity, interpretability, and ability to handle both categorical and numerical data[^2]. A decision tree consists of a root node, branches, internal decision nodes, and leaf (terminal) nodes. The root node has no incoming branches, only outgoing branches leading to decision nodes that apply specific conditions to split the data into increasingly homogeneous subsets until a terminal node is reached[^1].
 
 
 ![Decision Tree](./images/basic%20Decision%20tree.png)
@@ -251,7 +251,7 @@ This function evaluates how the model’s training time and accuracy change as t
 
 ### CART Algorithm (from scratch)
 
-You can find the original code for this in [CART](cart.py) and [Main](cart_main.py).
+You can find the original code for this in [CART](cart.py) and [Main](cart_main.py). I used the following sourcees to help me with this. [^19] [^20]
 
 Although I did not initially plan to implement two versions of the decision tree algorithm, starting with scikit-learn’s built-in DecisionTreeClassifier gave me a strong foundational understanding of the workflow, key parameters, and performance evaluation. This baseline experience made it much easier to translate the theory into code when I later implemented the CART (Classification and Regression Tree) algorithm from scratch in Python. My custom version uses its own Node structure and recursive tree-building logic to split datasets based on Gini impurity. Unlike the scikit-learn implementation, which abstracts away these details, my version explicitly handles each step: choosing the best split, partitioning the data, and assigning labels to leaf nodes.
 
@@ -566,6 +566,6 @@ Beyond the empirical results, this project was my introduction to implementing a
 
 [^18]: GeeksforGeeks. 2022. Scikit-learn: Classification Metrics. GeeksforGeeks. Retrieved August 6, 2025 from https://www.geeksforgeeks.org/machine-learning/sklearn-classification-metrics/
 
-[^19]: GeeksforGeeks. 2024. Python | Decision tree implementation. GeeksforGeeks. Retrieved August 7, 2025 from https://www.geeksforgeeks.org/machine-learning/decision-tree-implementation-python/
+[^19]: Egazakharenko, E. 2024. Decision Tree (CART) from Scratch: Full Tutorial. Kaggle Notebook. Retrieved August 11, 2025, from https://www.kaggle.com/code/egazakharenko/decision-tree-cart-from-scratch-full-tutorial
 
-[^20]: GeeksforGeeks. 2025. Implementing Decision Tree Classifiers with scikit‑learn: A Comprehensive Guide. GeeksforGeeks. Retrieved August 7, 2025 from https://www.geeksforgeeks.org/machine-learningbuilding-and-implementing-decision-tree-classifiers-with-scikit-learn-a-comprehensive-guide/
+[^20]: GeeksforGeeks. 2025. Implementing CART (Classification And Regression Tree) in Python. GeeksforGeeks Article. Retrieved August 11, 2025, from https://www.geeksforgeeks.org/machine-learning/implementing-cart-classification-and-regression-tree-in-python/
