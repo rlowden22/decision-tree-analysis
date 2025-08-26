@@ -1,7 +1,7 @@
-# 5008 Final Research Paper
+# Data Structures & Algorithms
 * Name: Rowan Lowden
 * Semester: Summer 2025
-* Topic: Decision Tree Algorithm
+* Topic: Decision Tree Analysis
 
 ## Introduction/Overview
 

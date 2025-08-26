@@ -1,5 +1,5 @@
 # Rowan Lowden
-# 5008: Summer 2025
+# Data Structures & Algorithms: Summer 2025
 # Final Project Code: Decision Tree implmentation with sci-kit learn on 3 datasets
 
 

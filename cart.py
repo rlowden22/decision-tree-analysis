@@ -1,5 +1,5 @@
 # Rowan Lowden
-# 5008: Summer 2025
+# Data Structures & Algorithms: Summer 2025
 # Final Project Code: Decision Tree implmentation on 3 datasets
 # This code implements an original CART Decision Tree model on various datasets.
 
